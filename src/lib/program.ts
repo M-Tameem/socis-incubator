@@ -31,9 +31,10 @@ export const PHASES: Phase[] = [
     weeks: "Weeks 1–2",
     summary: "Apply, meet your team, and agree on a project you can finish.",
     items: [
-      "Apply alone or with an existing team",
-      "Tell us if you have an idea; it is optional",
-      "We match individual applicants by schedule and interests",
+      "Every student submits their own application",
+      "Use the idea portal to find possible collaborators",
+      "List preferred teammates in your application",
+      "SOCIS matches applicants by interests, experience, and availability",
       "Each team submits a short proposal",
       "SOCIS assigns one executive contact to each team",
     ],
@@ -153,7 +154,17 @@ export const FAQS: Faq[] = [
   {
     question: "Do I need a project idea or a team to apply?",
     answer:
-      "No. Apply alone and we will match you with a team. If you already have teammates or an idea, include them in your application.",
+      "No. Everyone submits their own application. List preferred teammates if you have them, or use the idea portal to meet people. SOCIS confirms final teams after applications close.",
+  },
+  {
+    question: "Does contacting someone in the idea portal put us on a team?",
+    answer:
+      "No. It only lets you exchange contact details and discuss working together. Each person still applies separately and lists preferred teammates. SOCIS makes the final placement.",
+  },
+  {
+    question: "Can an existing group apply together?",
+    answer:
+      "Yes, but every person must submit their own application and name the same teammates. SOCIS will try to keep the group together if the team size, availability, and project scope work.",
   },
   {
     question: "How much time does this take?",

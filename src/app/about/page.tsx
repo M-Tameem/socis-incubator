@@ -46,6 +46,30 @@ export default function AboutPage() {
       </section>
 
       <section>
+        <h2 className="text-xl font-semibold">How teams are formed</h2>
+        <div className="prose-page mt-3 space-y-3 leading-7 text-muted-foreground">
+          <p>
+            Everyone applies separately. If you already know who you want to work with, each person
+            lists the others in their application.
+          </p>
+          <p>
+            The idea portal is available until applications close. It helps students discuss ideas
+            and exchange contact details, but it does not create an official team.
+          </p>
+          <p>
+            SOCIS reviews teammate preferences, interests, experience, and availability. Executives
+            then confirm teams of three to five and assign an executive contact. Preferences are
+            considered but cannot be guaranteed.
+          </p>
+        </div>
+        <p className="mt-5 text-sm">
+          <Link href="/ideas" className="text-link underline underline-offset-4 hover:no-underline">
+            Browse project ideas
+          </Link>
+        </p>
+      </section>
+
+      <section>
         <h2 className="text-xl font-semibold">The four phases</h2>
         <ol className="mt-6 space-y-10">
           {PHASES.map((phase) => (
@@ -115,7 +139,7 @@ export default function AboutPage() {
       <section className="border-t border-border pt-10">
         <h2 className="text-xl font-semibold">Apply</h2>
         <p className="prose-page mt-2 text-muted-foreground">
-          The form takes about fifteen minutes. Teammates and project ideas are optional.
+          Everyone submits their own form. Teammate preferences and project ideas are optional.
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-4">
           <Button asChild>

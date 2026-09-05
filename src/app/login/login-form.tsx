@@ -43,9 +43,9 @@ export function LoginForm({ next }: { next: string }) {
       <SubmitButton pendingLabel="Sending…">Email me a sign-in link</SubmitButton>
 
       <p className="text-sm text-muted-foreground">
-        Have not applied yet?{" "}
-        <Link href="/apply" className="text-link underline underline-offset-4 hover:no-underline">
-          Apply to the incubator
+        Looking for collaborators?{" "}
+        <Link href="/ideas" className="text-link underline underline-offset-4 hover:no-underline">
+          Browse the idea portal
         </Link>
         .
       </p>

@@ -56,6 +56,19 @@ export const teamSchema = z.object({
   tech_stack: z.string().trim().max(400).optional().or(z.literal("")),
 });
 
+export const ideaPostSchema = z.object({
+  display_name: required("Your name").max(100),
+  title: required("Idea title").min(5, "Use at least 5 characters.").max(100),
+  summary: required("Idea summary").min(20, "Use at least 20 characters.").max(1200),
+  looking_for: required("Who you need").min(5, "Use at least 5 characters.").max(600),
+});
+
+export const ideaInterestSchema = z.object({
+  idea_id: z.string().uuid("That idea could not be found."),
+  display_name: required("Your name").max(100),
+  message: required("Message").min(10, "Use at least 10 characters.").max(1000),
+});
+
 /** Turns a Zod error into { field: message } for rendering next to inputs. */
 export function fieldErrors(error: z.ZodError) {
   const out: Record<string, string> = {};

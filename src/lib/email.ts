@@ -29,7 +29,7 @@ async function send({ to, subject, body }: Mail) {
   const html = `<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.6;color:#171717;max-width:34rem">
 ${body.map((paragraph) => `<p>${escapeHtml(paragraph).replaceAll("\n", "<br>")}</p>`).join("\n")}
 <p style="color:#6b7280;font-size:13px;border-top:1px solid #e5e7eb;padding-top:12px;margin-top:24px">
-SOCIS Computer Science Incubator &middot; <a href="${safeSite}" style="color:#9a2c37">${escapeHtml(SITE.replace(/^https?:\/\//, ""))}</a>
+SOCIS Computer Science Incubator &middot; <a href="${safeSite}" style="color:#7d398d">${escapeHtml(SITE.replace(/^https?:\/\//, ""))}</a>
 </p></div>`;
 
   if (!resend) {
@@ -134,6 +134,26 @@ export function sendProposalFeedback(
         : "We'd like some changes to your project proposal before it's approved.",
       feedback,
       `${SITE}/dashboard/proposal`,
+    ],
+  });
+}
+
+export function sendIdeaInterest(
+  to: string,
+  authorName: string,
+  ideaTitle: string,
+  senderName: string,
+  senderEmail: string,
+  message: string,
+) {
+  return send({
+    to,
+    subject: `New interest in your idea | ${ideaTitle}`,
+    body: [
+      `Hi ${authorName},`,
+      `${senderName} is interested in joining or discussing "${ideaTitle}."`,
+      message,
+      `Reply to ${senderEmail} if you want to talk. SOCIS finalizes team placements after applications close.`,
     ],
   });
 }

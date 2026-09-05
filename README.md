@@ -19,6 +19,8 @@ project-management tool. Each of those has a job, and the site links out to them
 | --- | --- |
 | `/` | What the incubator is, key facts, the four phases |
 | `/about` | How it works: eligibility, expectations, phases, scope rule, money |
+| `/ideas`, `/ideas/[id]` | Public idea board with private expressions of interest |
+| `/ideas/new` | Signed-in form for posting an idea before applications close |
 | `/timeline` | Important dates and the week-by-week schedule |
 | `/apply` | Application form (closes automatically after the closing date) |
 | `/faq` | Common questions |
@@ -165,6 +167,11 @@ Then import `Database` from that file in `src/lib/supabase/*.ts`.
 in `schema.sql` are what actually enforce that students only read their own application,
 their own team's proposal, and their own team's check-ins. Do not disable RLS to fix a bug.
 
+**Idea posts are public; contact details are not.** Signed-in students can post and express
+interest until applications close. Only the sender, the idea author, and executives can read
+an interest message or email address. A portal response does not create a team; executives
+still finalize membership in `/admin/teams`.
+
 **`proxy.ts`** (called `middleware.ts` before Next 16) refreshes the Supabase session on
 every request and redirects signed-out visitors away from `/dashboard` and `/admin`.
 
@@ -186,7 +193,7 @@ mascot will not appear in a normal deployment unless someone opts in.
 src/
   app/
     (public pages)        home, about, timeline, apply, faq, events,
-                          projects, resources, demo-day, contact
+                          ideas, projects, resources, demo-day, contact
     dashboard/            student area — team, proposal, check-ins
     admin/                executive area — applications, teams, check-ins,
                           events, settings

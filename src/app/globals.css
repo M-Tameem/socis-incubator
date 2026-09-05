@@ -4,8 +4,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
-  Restrained palette. One accent (a muted crimson) used for links, the active
-  nav item, and status emphasis. The remaining palette stays neutral.
+  Restrained palette. One pink-purple accent is used for links, the active nav
+  item, and status emphasis. The remaining palette stays neutral.
 */
 :root {
   --background: #fafaf7;

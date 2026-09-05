@@ -55,6 +55,11 @@ export default async function HomePage() {
           <Link href="/about" className="text-sm text-link underline underline-offset-4 hover:no-underline">
             How the program works
           </Link>
+          {open ? (
+            <Link href="/ideas" className="text-sm text-link underline underline-offset-4 hover:no-underline">
+              Find an idea or teammates
+            </Link>
+          ) : null}
         </div>
 
         {open && settings.applications_close ? (

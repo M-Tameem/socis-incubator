@@ -34,8 +34,16 @@ export default async function ApplyPage() {
     <div className="space-y-10">
       <PageHeader
         title="Apply"
-        lede="The form takes about fifteen minutes. Apply alone or list people you want to work with. A project idea is optional."
+        lede="Everyone submits their own application. List preferred teammates if you have them. A project idea is optional."
       />
+
+      <p className="prose-page text-sm leading-6 text-muted-foreground">
+        Still looking for people? Browse the{" "}
+        <Link href="/ideas" className="text-link underline underline-offset-4 hover:no-underline">
+          idea portal
+        </Link>
+        . SOCIS confirms final teams after applications close.
+      </p>
 
       {settings.applications_close ? (
         <Alert>Applications close {formatDate(settings.applications_close)}.</Alert>

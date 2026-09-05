@@ -186,8 +186,8 @@ export function ApplicationForm() {
         </div>
 
         <p className="text-sm text-muted-foreground">
-          Neither box checked is completely fine. Most students apply alone with no idea and get
-          matched into a team.
+          Most students apply alone. Use the idea portal if you want to meet possible teammates.
+          SOCIS reviews preferences and confirms the final teams.
         </p>
       </section>
 

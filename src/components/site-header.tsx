@@ -6,6 +6,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV = [
   { href: "/about", label: "How it works" },
+  { href: "/ideas", label: "Ideas" },
   { href: "/timeline", label: "Timeline" },
   { href: "/events", label: "Events" },
   { href: "/projects", label: "Projects" },
@@ -28,7 +29,7 @@ export async function SiteHeader() {
           <span>SOCIS Incubator</span>
         </Link>
 
-        <nav aria-label="Main" className="ml-2 hidden items-center gap-5 text-sm lg:flex">
+        <nav aria-label="Main" className="ml-2 hidden items-center gap-4 text-sm lg:flex">
           {NAV.map((item) => (
             <NavLink key={item.href} href={item.href}>
               {item.label}

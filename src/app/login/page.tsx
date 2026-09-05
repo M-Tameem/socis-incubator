@@ -22,7 +22,7 @@ export default async function LoginPage({
     <div className="max-w-md space-y-8">
       <PageHeader
         title="Sign in"
-        lede="Enter the email address from your application. We will send you a one-time sign-in link."
+        lede="Enter your email address. A one-time sign-in link will be sent to you."
       />
       <LoginForm next={destination} />
     </div>

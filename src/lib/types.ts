@@ -16,6 +16,7 @@ export type EventKind =
   | "career"
   | "demo_day"
   | "other";
+export type IdeaStatus = "open" | "matched" | "closed";
 
 export type Profile = {
   id: string;
@@ -131,6 +132,28 @@ export type Resource = {
   category: string;
   sort_order: number;
   published: boolean;
+};
+
+export type IdeaPost = {
+  id: string;
+  author_id: string;
+  author_name: string;
+  title: string;
+  summary: string;
+  looking_for: string;
+  status: IdeaStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+export type IdeaInterest = {
+  id: string;
+  idea_id: string;
+  sender_id: string;
+  sender_name: string;
+  sender_email: string;
+  message: string;
+  created_at: string;
 };
 
 /**
@@ -252,6 +275,49 @@ export type Database = {
         Update: Partial<{ key: string; value: string; updated_at: string }>;
         Relationships: [];
       };
+      idea_posts: {
+        Row: IdeaPost;
+        Insert: Omit<IdeaPost, "id" | Timestamps | "status"> & {
+          id?: string;
+          status?: IdeaStatus;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<IdeaPost>;
+        Relationships: [
+          {
+            foreignKeyName: "idea_posts_author_id_fkey";
+            columns: ["author_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      idea_interests: {
+        Row: IdeaInterest;
+        Insert: Omit<IdeaInterest, "id" | "created_at"> & {
+          id?: string;
+          created_at?: string;
+        };
+        Update: Partial<IdeaInterest>;
+        Relationships: [
+          {
+            foreignKeyName: "idea_interests_idea_id_fkey";
+            columns: ["idea_id"];
+            isOneToOne: false;
+            referencedRelation: "idea_posts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "idea_interests_sender_id_fkey";
+            columns: ["sender_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<never, never>;
     Functions: {
@@ -263,6 +329,10 @@ export type Database = {
           role_on_team: string | null;
         }[];
       };
+      idea_portal_open: {
+        Args: Record<PropertyKey, never>;
+        Returns: boolean;
+      };
     };
     Enums: {
       user_role: UserRole;
@@ -270,6 +340,7 @@ export type Database = {
       team_status: TeamStatus;
       proposal_status: ProposalStatus;
       event_kind: EventKind;
+      idea_status: IdeaStatus;
     };
     CompositeTypes: Record<never, never>;
   };
