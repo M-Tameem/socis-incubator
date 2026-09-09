@@ -32,19 +32,19 @@ project-management tool. Each of those has a job, and the site links out to them
 
 **Students** (sign-in required)
 
-- `/dashboard` — application status, or team status once placed
-- `/dashboard/team` — members, executive contact, GitHub repo, project details
-- `/dashboard/proposal` — project proposal with review feedback
-- `/dashboard/check-ins` — bi-weekly check-ins and history
+- `/dashboard`: application status, or team status once placed
+- `/dashboard/team`: members, executive contact, GitHub repo, project details
+- `/dashboard/proposal`: project proposal with review feedback
+- `/dashboard/check-ins`: bi-weekly check-ins and history
 
 **Executives** (`exec` or `admin` role required)
 
-- `/admin` — counts, teams needing attention, recent check-ins
-- `/admin/applications` — review, status changes, optional decision emails, private notes
-- `/admin/teams` — create teams, assign members and exec contacts, review proposals, publish to the showcase
-- `/admin/check-ins` — all check-ins, filterable to those needing follow-up
-- `/admin/events` — create and publish events
-- `/admin/settings` — the dates and links shown across the public site
+- `/admin`: counts, teams needing attention, recent check-ins
+- `/admin/applications`: review, status changes, optional decision emails, private notes
+- `/admin/teams`: create teams, assign members and exec contacts, review proposals, publish to the showcase
+- `/admin/check-ins`: all check-ins, filterable to those needing follow-up
+- `/admin/events`: create and publish events
+- `/admin/settings`: the dates and links shown across the public site
 
 ---
 
@@ -60,10 +60,18 @@ cp .env.example .env.local
 
 ### 2. Supabase
 
-Create a project at [supabase.com](https://supabase.com), then in the SQL editor run:
+Create a project at [supabase.com](https://supabase.com), link the Supabase CLI to it, then apply
+the checked-in database history:
 
-1. `supabase/schema.sql` — tables, enums, row-level security, storage bucket
-2. `supabase/seed.sql` — optional starter dates and resource links (edit the dates first)
+```bash
+npx supabase login
+npx supabase link --project-ref <project-ref>
+npx supabase db push
+```
+
+The migrations create the tables, enums, row-level security policies, grants, and storage bucket.
+`supabase/seed.sql` contains optional starter dates and resource links; edit it before running it
+in the SQL editor.
 
 Copy the project URL and keys from **Project Settings → API** into `.env.local`.
 
@@ -112,14 +120,14 @@ Roles are `student`, `exec`, and `admin`. Both `exec` and `admin` can reach `/ad
 ## Deploying to Vercel
 
 Import the repository, then add the same environment variables from `.env.example`.
-Set `NEXT_PUBLIC_SITE_URL` to the production URL — email links are built from it.
+Set `NEXT_PUBLIC_SITE_URL` to the production URL. Email links are built from it.
 
 Keep `SUPABASE_SERVICE_ROLE_KEY` server-side only. It bypasses row-level security and is
 used only by admin server actions that have already verified the caller is an executive.
 
 Before the first production deploy:
 
-1. Run `supabase/schema.sql` (and optionally `supabase/seed.sql`) in the target Supabase project.
+1. Push the migrations in `supabase/migrations` to the target Supabase project.
 2. Add every variable from `.env.example` to the Vercel project. Production needs real values
    for both public Supabase variables and `SUPABASE_SERVICE_ROLE_KEY`.
 3. Add the production `/auth/callback` URL to Supabase Authentication URL Configuration.
@@ -131,19 +139,19 @@ Before the first production deploy:
 
 ## Running a semester
 
-1. **Before the semester** — set the dates in `/admin/settings`, add resource links, edit
+1. **Before the semester:** set the dates in `/admin/settings`, add resource links, edit
    `src/lib/program.ts` if the phases or FAQ change.
-2. **Week 1** — applications arrive at `/admin/applications`. Each status change optionally
+2. **Week 1:** applications arrive at `/admin/applications`. Each status change optionally
    emails the applicant, so you can reorganize quietly and notify everyone at once.
-3. **Week 2** — create teams in `/admin/teams`, add members by email, assign executive
+3. **Week 2:** create teams in `/admin/teams`, add members by email, assign executive
    contacts. Students must sign in once before they can be added, so a profile exists.
-4. **Week 2–3** — teams submit proposals; approve or request changes. Feedback is emailed
+4. **Week 2–3:** teams submit proposals; approve or request changes. Feedback is emailed
    to the whole team. Approved proposals lock.
-5. **Weeks 4–11** — watch `/admin/check-ins?flagged=1` for teams that are behind or asking
+5. **Weeks 4–11:** watch `/admin/check-ins?flagged=1` for teams that are behind or asking
    for help. That filter is the early-warning system the program plan depends on.
-6. **Weeks 11–13** — set Demo Day slots and tick **Show publicly** on each team to publish
+6. **Weeks 11–13:** set Demo Day slots and tick **Show publicly** on each team to publish
    them to `/projects` and `/demo-day`.
-7. **After Demo Day** — leave the projects published. That archive is the point.
+7. **After Demo Day:** leave the projects published. That archive is the point.
 
 ---
 
@@ -164,7 +172,7 @@ npx supabase gen types typescript --project-id <id> > src/lib/database.types.ts
 Then import `Database` from that file in `src/lib/supabase/*.ts`.
 
 **Row-level security does the real access control.** The UI hides things, but the policies
-in `schema.sql` are what actually enforce that students only read their own application,
+in `schemas/public.sql` are what actually enforce that students only read their own application,
 their own team's proposal, and their own team's check-ins. Do not disable RLS to fix a bug.
 
 **Idea posts are public; contact details are not.** Signed-in students can post and express
@@ -185,6 +193,11 @@ The jellyfish on the local home page is an isolated experiment. It lives in
 `NEXT_PUBLIC_SHOW_MASCOT=true`. That flag is intentionally absent from `.env.example`, so the
 mascot will not appear in a normal deployment unless someone opts in.
 
+**The lifecycle demo is local-only.** Set `DEMO_MODE=true` in `.env.local`, open `/login`, and
+choose the student or executive session. The sessions use fictional read-only fixtures and an
+HTTP-only role cookie. `DEMO_MODE` is ignored in production even if it is accidentally set, and
+the flag is intentionally absent from `.env.example`.
+
 ---
 
 ## Project structure
@@ -194,8 +207,8 @@ src/
   app/
     (public pages)        home, about, timeline, apply, faq, events,
                           ideas, projects, resources, demo-day, contact
-    dashboard/            student area — team, proposal, check-ins
-    admin/                executive area — applications, teams, check-ins,
+    dashboard/            student area: team, proposal, check-ins
+    admin/                executive area: applications, teams, check-ins,
                           events, settings
     auth/                 magic-link callback and sign-out
   components/
@@ -209,6 +222,7 @@ src/
     email.ts              Resend templates
     types.ts              database types
 supabase/
-  schema.sql              tables, RLS, storage
-  seed.sql                starter data
+  schemas/public.sql      declarative tables and RLS
+  migrations/             deployable database history
+  seed.sql                local starter data
 ```

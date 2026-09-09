@@ -1,4 +1,4 @@
--- SOCIS Computer Science Incubator — database schema
+-- SOCIS Computer Science Incubator database schema
 -- Run this in the Supabase SQL editor, or with `supabase db push`.
 
 -- ---------------------------------------------------------------------------
@@ -311,7 +311,8 @@ create policy "update own profile" on profiles for update using (auth.uid() = id
 create policy "execs manage profiles" on profiles for all using (public.is_exec());
 
 -- A student may edit public profile fields, never their authorization role.
-revoke update on profiles from authenticated;
+revoke all on profiles from anon, authenticated;
+grant select on profiles to authenticated;
 grant update (full_name, program, year, github_url) on profiles to authenticated;
 
 -- Applications: anyone may submit a fresh application; applicants read their own;
@@ -326,7 +327,8 @@ create policy "anyone can apply" on applications for insert with check (
 create policy "read own application" on applications for select using (auth.uid() = user_id or public.is_exec());
 create policy "execs manage applications" on applications for all using (public.is_exec());
 
-revoke insert on applications from anon, authenticated;
+revoke all on applications from anon, authenticated;
+grant select on applications to authenticated;
 grant insert (
   user_id, full_name, email, program, year, skills, interest_areas,
   github_url, previous_projects, applying_with_team, teammates,
@@ -341,7 +343,8 @@ create policy "team leads update own team" on teams for update using (
 create policy "execs manage teams" on teams for all using (public.is_exec());
 
 -- Team leads can edit project copy, but not publication state or admin fields.
-revoke update on teams from authenticated;
+revoke all on teams from anon, authenticated;
+grant select on teams to anon, authenticated;
 grant update (
   name, tagline, description, github_url, demo_url, tech_stack,
   mvp_definition, communication_channel
@@ -397,9 +400,11 @@ create policy "authors delete ideas" on idea_posts for delete to authenticated u
 );
 create policy "execs manage ideas" on idea_posts for all using (public.is_exec());
 
-revoke insert, update on idea_posts from authenticated;
+revoke all on idea_posts from anon, authenticated;
+grant select on idea_posts to anon, authenticated;
 grant insert (author_id, author_name, title, summary, looking_for) on idea_posts to authenticated;
 grant update (title, summary, looking_for, status, updated_at) on idea_posts to authenticated;
+grant delete on idea_posts to authenticated;
 
 create policy "participants read idea interests" on idea_interests for select to authenticated using (
   sender_id = auth.uid()
@@ -428,15 +433,32 @@ create policy "senders withdraw idea interest" on idea_interests for delete to a
 );
 create policy "execs manage idea interests" on idea_interests for all using (public.is_exec());
 
-revoke insert on idea_interests from authenticated;
+revoke all on idea_interests from anon, authenticated;
+grant select, delete on idea_interests to authenticated;
 grant insert (idea_id, sender_id, sender_name, sender_email, message) on idea_interests to authenticated;
 
--- ---------------------------------------------------------------------------
--- Storage: team logos and Demo Day screenshots
--- ---------------------------------------------------------------------------
-insert into storage.buckets (id, name, public) values ('project-media', 'project-media', true)
-  on conflict (id) do nothing;
+-- Explicit table privileges backstop RLS and remove Supabase's broad default
+-- grants from public API roles. Administrative writes use the service role
+-- only after the server action verifies the executive session.
+revoke all on team_members, proposals, check_ins, events, event_rsvps,
+  resources, program_settings from anon, authenticated;
+grant select on team_members, proposals, check_ins to authenticated;
+grant insert (
+  team_id, problem, solution, target_user, mvp_scope, out_of_scope,
+  tech_stack, team_roles, milestones, status, submitted_at, updated_at
+) on proposals to authenticated;
+grant update (
+  team_id, problem, solution, target_user, mvp_scope, out_of_scope,
+  tech_stack, team_roles, milestones, status, submitted_at, updated_at
+) on proposals to authenticated;
+grant insert on check_ins to authenticated;
+grant select on events, resources, program_settings to anon, authenticated;
+grant select, insert, delete on event_rsvps to authenticated;
 
+-- ---------------------------------------------------------------------------
+-- Storage: team logos and Demo Day screenshots. The bucket itself is created
+-- by a migration because declarative schema files cannot contain data rows.
+-- ---------------------------------------------------------------------------
 create policy "public reads project media" on storage.objects
   for select using (bucket_id = 'project-media');
 create policy "signed-in users upload project media" on storage.objects

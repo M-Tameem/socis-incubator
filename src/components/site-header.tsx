@@ -3,6 +3,7 @@ import { getProfile } from "@/lib/auth";
 import { NavLink } from "@/components/nav-link";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { getDemoRole } from "@/lib/demo";
 
 const NAV = [
   { href: "/about", label: "How it works" },
@@ -16,7 +17,7 @@ const NAV = [
 ] as const;
 
 export async function SiteHeader() {
-  const profile = await getProfile();
+  const [profile, demoRole] = await Promise.all([getProfile(), getDemoRole()]);
   const isExec = profile?.role === "exec" || profile?.role === "admin";
 
   return (
@@ -41,8 +42,14 @@ export async function SiteHeader() {
           <ThemeToggle />
           {profile ? (
             <>
-              {isExec ? <NavLink href="/admin">Admin</NavLink> : null}
-              <NavLink href="/dashboard">Dashboard</NavLink>
+              {demoRole ? (
+                <NavLink href={demoRole === "exec" ? "/demo/exec" : "/demo/student"}>Demo</NavLink>
+              ) : (
+                <>
+                  {isExec ? <NavLink href="/admin">Admin</NavLink> : null}
+                  <NavLink href="/dashboard">Dashboard</NavLink>
+                </>
+              )}
             </>
           ) : (
             <>
