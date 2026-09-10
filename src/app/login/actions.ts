@@ -9,6 +9,7 @@ import { safeRedirectPath } from "@/lib/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { allowAuthAttempt } from "@/lib/auth-attempts";
 import { hashRecoveryAnswer, normalizeRecoveryAnswer, verifyRecoveryAnswer } from "@/lib/recovery";
+import { signupErrorDetails } from "@/lib/signup-error";
 
 export type LoginState = { error?: string; message?: string; email?: string };
 export type LoginMode = "signin" | "signup" | "reset";
@@ -65,12 +66,13 @@ export async function signUp(_previous: LoginState, formData: FormData): Promise
     email, password, email_confirm: true,
     app_metadata: { signup_method: "password_without_verification" },
   });
-  if (error || !data.user) return {
-    email,
-    error: (error && rateLimitMessage(error)) ?? (error?.code === "weak_password"
-      ? "Choose a stronger password. A longer, unique passphrase works well."
-      : "Could not create the account. Try signing in or resetting your password if you already have one."),
-  };
+  if (error || !data.user) {
+    const details = signupErrorDetails(error);
+    console.error("[auth/signup] create_user failed", {
+      code: details.code, status: error?.status ?? null,
+    });
+    return { email, error: details.message };
+  }
   const { error: recoveryError } = await admin.from("account_recovery").insert({
     user_id: data.user.id, email, answer_hash: answerHash,
   });

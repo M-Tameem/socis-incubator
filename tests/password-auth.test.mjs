@@ -6,6 +6,7 @@ import ts from "typescript";
 import { z } from "zod";
 import { safeRedirectPath } from "../src/lib/navigation.ts";
 import * as recovery from "../src/lib/recovery.ts";
+import { signupErrorDetails } from "../src/lib/signup-error.ts";
 
 const code = ts.transpileModule(readFileSync(new URL("../src/app/login/actions.ts", import.meta.url), "utf8"), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
@@ -33,6 +34,7 @@ function fixture({ allowed = true, matches = true, existing = true, authError = 
     } }; } },
     "@/lib/supabase/admin": { createAdminClient() { calls.push(["admin"]); return admin; } },
     "@/lib/navigation": { safeRedirectPath },
+    "@/lib/signup-error": { signupErrorDetails },
     "@/lib/auth-attempts": { async allowAuthAttempt(...args) { calls.push(["limit", ...args]); return allowed; } },
     "@/lib/recovery": {
       normalizeRecoveryAnswer: recovery.normalizeRecoveryAnswer,
@@ -42,7 +44,7 @@ function fixture({ allowed = true, matches = true, existing = true, authError = 
     "next/cache": { revalidatePath() {} },
     "next/navigation": { redirect(path) { throw new Error(`REDIRECT:${path}`); } },
   };
-  const context = { exports: {}, require(name) { assert.ok(imports[name], name); return imports[name]; } };
+  const context = { exports: {}, console: { error(...args) { calls.push(["log", ...args]); } }, require(name) { assert.ok(imports[name], name); return imports[name]; } };
   vm.runInNewContext(code, context);
   return { actions: context.exports, calls };
 }
@@ -113,6 +115,30 @@ test("sign-in errors never return passwords or recovery answers", async () => {
   const result = await actions.signIn({}, form());
   assert.ok(result.error);
   assert.deepEqual(Object.keys(result).sort(), ["email", "error"]);
+});
+
+test("signup reports Supabase error codes without changing existing accounts or logging secrets", async () => {
+  for (const [code, expected] of [
+    ["email_exists", /already exists/],
+    ["user_already_exists", /already exists/],
+    ["unexpected_failure", /could not create/],
+    ["not_admin", /not configured/],
+    ["weak_password", /password requirements/],
+    ["email_address_invalid", /rejected this email/],
+  ]) {
+    const { actions, calls } = fixture({ authError: { code, status: 400, message: "raw server response with private data" } });
+    const result = await actions.signUp({}, form());
+    assert.match(result.error, expected);
+    assert.ok(result.error.includes(`signup/${code}`));
+    assert.equal(calls.some(([name]) => ["saveRecovery", "setPassword", "signIn"].includes(name)), false);
+    const log = JSON.stringify(calls.filter(([name]) => name === "log"));
+    for (const secret of ["new-password-123", "Quiet Jellyfish", "user@example.test", "private data"]) {
+      assert.equal(log.includes(secret), false);
+      assert.equal(result.error.includes(secret), false);
+    }
+  }
+  assert.equal(signupErrorDetails({ code: "unsafe code with private data" }).code, "unknown_error");
+  assert.equal(signupErrorDetails(null).code, "missing_user");
 });
 
 test("recovery hashes are salted and accept normalization but reject wrong answers", async () => {
