@@ -65,7 +65,8 @@ export default async function ResourcesPage() {
         <div className="prose-page mt-3 space-y-4 text-muted-foreground">
           <p>
             <span className="font-medium text-foreground">Scope.</span> Your first usable version
-            must fit inside ten weeks. Cut features in Week 2, not Week 11.
+            should be small enough to finish by semester&apos;s end. Decide what matters most and
+            save extra features for later.
           </p>
           <p>
             <span className="font-medium text-foreground">Repositories.</span> Use one repository
@@ -73,8 +74,9 @@ export default async function ResourcesPage() {
             how to run it. Use issues and pull requests for shared work.
           </p>
           <p>
-            <span className="font-medium text-foreground">Feature freeze.</span> In Week 11, stop
-            adding features. Fix the current build and prepare the demo.
+            <span className="font-medium text-foreground">Finalization.</span> Weeks 10–13 focus on
+            finishing, testing, and presenting. Detailed arrangements are TBD. Pitch at the Wood
+            Centre on November 19 and present at SOCIS Demo Day (date TBD).
           </p>
           <p>
             <span className="font-medium text-foreground">Spending.</span> Get approval from

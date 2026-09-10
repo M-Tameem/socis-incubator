@@ -39,27 +39,32 @@ export default async function DemoDayPage() {
     <div className="space-y-14">
       <PageHeader
         title="Demo Day"
-        lede="Each team presents its project and runs a live demo. Guests are welcome."
-      />
+        lede="Finish the semester with a working project and somewhere to present it. SOCIS Demo Day's date and format are TBD; details will follow as plans are confirmed."
+      >
+        <p className="prose-page text-sm text-muted-foreground">
+          Build a working project by semester&apos;s end. Teams will also pitch at the Wood
+          Centre&apos;s Open Pitch Night on November 19 at the Bullring. SOCIS Demo Day&apos;s date is TBD.
+        </p>
+      </PageHeader>
 
       <section>
         <h2 className="text-lg font-semibold">Details</h2>
         <dl className="mt-4 divide-y divide-border border-y border-border">
           <div className="grid gap-1 py-3 sm:grid-cols-[10rem_1fr] sm:gap-8">
             <dt className="text-muted-foreground">Date</dt>
-            <dd>{dateLabel ?? "To be confirmed"}</dd>
+            <dd>{dateLabel ?? "TBD"}</dd>
           </div>
           <div className="grid gap-1 py-3 sm:grid-cols-[10rem_1fr] sm:gap-8">
             <dt className="text-muted-foreground">Time</dt>
-            <dd>{settings.demo_day_time || "To be confirmed"}</dd>
+            <dd>{settings.demo_day_time || "TBD"}</dd>
           </div>
           <div className="grid gap-1 py-3 sm:grid-cols-[10rem_1fr] sm:gap-8">
             <dt className="text-muted-foreground">Location</dt>
-            <dd>{settings.demo_day_location || demoDayEvent?.location || "To be confirmed"}</dd>
+            <dd>{settings.demo_day_location || demoDayEvent?.location || "TBD"}</dd>
           </div>
           <div className="grid gap-1 py-3 sm:grid-cols-[10rem_1fr] sm:gap-8">
             <dt className="text-muted-foreground">Cost</dt>
-            <dd>Free. Food provided.</dd>
+            <dd>Free</dd>
           </div>
         </dl>
 
@@ -73,12 +78,15 @@ export default async function DemoDayPage() {
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold">What the evening looks like</h2>
+        <h2 className="text-lg font-semibold">What we&apos;re planning</h2>
+        <p className="prose-page mt-3 text-muted-foreground">
+          Teams will present their projects. The outline below is provisional; the final
+          format, schedule, and guest lineup are TBD.
+        </p>
         <dl className="mt-4 divide-y divide-border border-y border-border">
           {[
-            ["Doors and food", "Arrive, eat, talk to people."],
             ["Presentations", "Each team explains the project and runs a live demo."],
-            ["Judging", "Judges score the projects and select prize winners."],
+            ["Feedback", "Discuss what you built, the decisions you made, and what comes next."],
             ["Open demos", "Guests can try the projects and speak with each team."],
           ].map(([label, detail]) => (
             <div key={label} className="grid gap-1 py-3 sm:grid-cols-[12rem_1fr] sm:gap-8">
@@ -87,6 +95,10 @@ export default async function DemoDayPage() {
             </div>
           ))}
         </dl>
+        <p className="prose-page mt-4 text-sm text-muted-foreground">
+          Prizes and industry participation are TBD. Collaborators will be announced as
+          they are confirmed.
+        </p>
       </section>
 
       <section>
@@ -113,7 +125,7 @@ export default async function DemoDayPage() {
           </ul>
         ) : (
           <p className="mt-3 text-muted-foreground">
-            The lineup is published a couple of weeks before the event.
+            Presenting teams and their slots will be announced once the event schedule is confirmed.
           </p>
         )}
       </section>

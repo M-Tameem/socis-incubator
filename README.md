@@ -22,7 +22,7 @@ project-management tool. Each of those has a job, and the site links out to them
 | `/ideas`, `/ideas/[id]` | Public idea board with private expressions of interest |
 | `/ideas/new` | Signed-in form for posting an idea before applications close |
 | `/timeline` | Important dates and the week-by-week schedule |
-| `/apply` | Application form (closes automatically after the closing date) |
+| `/apply` | One application for groups or solo applicants; sign in to revise until the deadline |
 | `/faq` | Common questions |
 | `/events` | Workshops, talks, mentor sessions, with registration links |
 | `/projects`, `/projects/[slug]` | Showcase of completed projects |
@@ -38,6 +38,8 @@ project-management tool. Each of those has a job, and the site links out to them
 - `/dashboard/check-ins`: bi-weekly check-ins and history
 
 **Executives** (`exec` or `admin` role required)
+
+- `/admin/moderation`: review and permanently delete any idea post or private interest message. Deleting a post cascades to its messages. Confirmation is required in the interface; delivered email notifications cannot be recalled. Both the server action and existing database policies enforce executive access, including after applications close.
 
 - `/admin`: counts, teams needing attention, recent check-ins
 - `/admin/applications`: review, status changes, optional decision emails, private notes
@@ -78,16 +80,26 @@ Copy the project URL and keys from **Project Settings → API** into `.env.local
 Under **Authentication → URL Configuration**, add your redirect URLs:
 
 ```
-http://localhost:3000/auth/callback
-https://your-domain.vercel.app/auth/callback
+http://localhost:3000/auth/callback**
+https://socis-incubator.vercel.app/auth/callback**
 ```
 
 Sign-in is by emailed magic link, so there are no passwords to manage or reset.
+
+For the hosted project, set **Site URL** to `https://socis-incubator.vercel.app`.
+The callback allow-list entries above include the `?next=...` query used by sign-in.
+`supabase/config.toml` configures local development; it does not update the hosted project's
+Authentication URL Configuration when database migrations are pushed.
 
 ### 3. Resend
 
 Create an API key at [resend.com](https://resend.com) and verify the sending domain.
 Set `RESEND_API_KEY`, `EMAIL_FROM`, and `EMAIL_ADMIN`.
+
+The public contact and transactional email Reply-To address is `socis@uoguelph.ca`.
+Set `EMAIL_ADMIN=socis@uoguelph.ca` in Vercel for application alerts. Keep `EMAIL_FROM`
+on your verified Resend sending domain; a contact address does not grant permission to send
+from the university's domain. Supabase sends magic links using its own email configuration.
 
 Without `RESEND_API_KEY` the app logs emails to the console instead of sending them,
 so local development works with no Resend account.
@@ -105,15 +117,31 @@ npm run check      # lint, typecheck, and production build
 The repository includes a GitHub Actions workflow that runs the same deployment checks on
 every push and pull request.
 
-### 5. Make yourself an executive
+### 5. Enroll SOCIS staff and executives
 
-Sign in once so a profile row is created, then in the Supabase SQL editor:
+Have each staff member sign in at `/login` with their own email and complete the magic-link
+sign-in once. This creates their profile; they do not need to submit a student application.
+A trusted Supabase project operator then runs this in the production SQL editor, replacing
+the example address with the staff member's exact sign-in email:
 
 ```sql
-update profiles set role = 'admin' where email = 'you@socis.ca';
+update public.profiles
+set role = 'exec'
+where lower(email) = lower('staff-member@uoguelph.ca')
+returning id, email, role;
 ```
 
-Roles are `student`, `exec`, and `admin`. Both `exec` and `admin` can reach `/admin`.
+Confirm that the returned row is the intended person. Zero rows means no matching profile
+exists yet. They can then reload `/admin`; the app reads the role from the database on each
+request, so no new deployment is needed.
+
+Roles are `student`, `exec`, and `admin`; there is no separate `staff` role or staff invitation
+screen. Use `exec` for staff who should operate the incubator and `admin` for the owner.
+Both currently have the same program-management permissions, including private applications,
+team management, and settings. Neither can grant roles through the website; role assignment
+requires trusted database access. Never grant access to everyone sharing an email domain.
+
+To remove staff access, run the same update with `role = 'student'` and verify the returned row.
 
 ---
 
@@ -121,6 +149,17 @@ Roles are `student`, `exec`, and `admin`. Both `exec` and `admin` can reach `/ad
 
 Import the repository, then add the same environment variables from `.env.example`.
 Set `NEXT_PUBLIC_SITE_URL` to the production URL. Email links are built from it.
+
+For this deployment, use `NEXT_PUBLIC_SITE_URL=https://socis-incubator.vercel.app` in the
+Vercel **Production** environment and redeploy after changing it. The app uses that origin
+for auth and transactional links; missing, malformed, insecure, or localhost production
+values fall back to the production address above. Development still defaults to localhost.
+
+If a magic link sends you to localhost, check both that Vercel variable and Supabase
+**Authentication → URL Configuration** (Site URL and allowed callback URL above). Keep the
+Magic Link email template pointing to `{{ .ConfirmationURL }}` for the existing code-exchange
+flow. After correcting the settings, request a fresh link and open it in the browser where
+you requested it. Already-issued emails retain their original redirect URL.
 
 Keep `SUPABASE_SERVICE_ROLE_KEY` server-side only. It bypasses row-level security and is
 used only by admin server actions that have already verified the caller is an executive.
@@ -139,18 +178,48 @@ Before the first production deploy:
 
 ## Running a semester
 
+Fall 2026 targets 15 teams (45–75 students). Week 1 begins September 14, applications run
+September 9–27, with help finding teammates available from September 22. Friends and groups
+formed around an idea each list the same teammates and project name in the normal application.
+Solo applicants use the same form and can be matched after the deadline. Initial project ideas
+are part of the application; detailed team planning happens after joining.
+
+Teams will finish a working project by semester's end, pitch at the Wood Centre's Open Pitch
+Night on **November 19 at the Bullring**, and present at SOCIS Demo Day (date, time, and location
+TBD). Weeks 10–13 focus on finalization; remaining arrangements are TBD. The calendar is in
+`src/lib/program.ts` and selected Wood Centre opportunities are in `src/lib/wood-centre.ts`,
+using the event postcard and September 8 organizer confirmation supplied by SOCIS.
+Microgrants are **$50–$75 per team** for approved costs. Prize and industry collaborator details
+will be announced as confirmed.
+
+Apply `20260910020000_fall_2026_schedule.sql` when deploying these dates to an existing
+Supabase project. It updates the saved schedule and aligns idea-board access with the full
+application window in Toronto time. New/local previews use the same dates by default.
+Keep unconfirmed Demo Day settings empty so the site displays **TBD**, rather than saving
+the text `TBD` in a date field.
+
+Also apply `20260910030000_applicant_revisions.sql` before deploying application editing.
+Applicants sign in with the same email they applied with and return to `/apply`. Verified
+email ownership lets them retrieve an earlier anonymous submission. Narrow database functions
+return only applicant-visible fields and revise only their own answers while the application
+window is open. Email, review decisions, notes, and team assignments cannot be changed through
+this flow. A revision updates the existing row, checks for stale edits, and sends no duplicate
+submission emails. The Postgres tests exercise these access and deadline boundaries.
+
 1. **Before the semester:** set the dates in `/admin/settings`, add resource links, edit
    `src/lib/program.ts` if the phases or FAQ change.
 2. **Week 1:** applications arrive at `/admin/applications`. Each status change optionally
    emails the applicant, so you can reorganize quietly and notify everyone at once.
-3. **Week 2:** create teams in `/admin/teams`, add members by email, assign executive
-   contacts. Students must sign in once before they can be added, so a profile exists.
-4. **Week 2–3:** teams submit proposals; approve or request changes. Feedback is emailed
-   to the whole team. Approved proposals lock.
-5. **Weeks 4–11:** watch `/admin/check-ins?flagged=1` for teams that are behind or asking
+3. **Weeks 2–3:** record groups that applied together in `/admin/teams` and help solo applicants
+   find teammates after the deadline. Add members by email and assign executive contacts.
+   Students must sign in once before they can be added, so a profile exists.
+4. **Week 3 onward:** groups develop their project plans. Use the existing proposal review
+   tools for feedback on scope after joining. Approved plans lock.
+5. **Weeks 4–9:** watch `/admin/check-ins?flagged=1` for teams that are behind or asking
    for help. That filter is the early-warning system the program plan depends on.
-6. **Weeks 11–13:** set Demo Day slots and tick **Show publicly** on each team to publish
-   them to `/projects` and `/demo-day`.
+6. **Weeks 10–13:** pitch at the Wood Centre on November 19 and finalize the project. Once
+   Demo Day is scheduled, set slots and tick **Show publicly** to publish teams to `/projects`
+   and `/demo-day`.
 7. **After Demo Day:** leave the projects published. That archive is the point.
 
 ---
@@ -177,8 +246,8 @@ their own team's proposal, and their own team's check-ins. Do not disable RLS to
 
 **Idea posts are public; contact details are not.** Signed-in students can post and express
 interest until applications close. Only the sender, the idea author, and executives can read
-an interest message or email address. A portal response does not create a team; executives
-still finalize membership in `/admin/teams`.
+an interest message or email address. Students form groups through conversation and list the
+same teammates when applying; executives record those groups in `/admin/teams`.
 
 **`proxy.ts`** (called `middleware.ts` before Next 16) refreshes the Supabase session on
 every request and redirects signed-out visitors away from `/dashboard` and `/admin`.
@@ -188,10 +257,11 @@ webfonts), a pink-purple SOCIS accent, hairline borders instead of shadows, and 
 motion. Light and dark themes share the same semantic colour tokens. Body copy is capped with
 `.prose-page`.
 
-The jellyfish on the local home page is an isolated experiment. It lives in
-`src/components/experiments/jellyfish-mark.tsx` and only renders when
-`NEXT_PUBLIC_SHOW_MASCOT=true`. That flag is intentionally absent from `.env.example`, so the
-mascot will not appear in a normal deployment unless someone opts in.
+The custom jellyfish is an inline SVG in `src/components/jellyfish-mark.tsx`, rendered in the
+shared header and on the home and About pages at mobile and desktop sizes. It needs no
+environment flag or JavaScript. `src/app/icon.svg` is its matching browser icon. The public
+contact defaults to `socis@uoguelph.ca`; an old seeded `incubator@socis.ca` value is also
+resolved to that address, while other addresses saved in `/admin/settings` are preserved.
 
 **The lifecycle demo is local-only.** Set `DEMO_MODE=true` in `.env.local`, open `/login`, and
 choose the student or executive session. The sessions use fictional read-only fixtures and an

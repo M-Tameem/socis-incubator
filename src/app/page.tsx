@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PROGRAM, PHASES, TOOLING } from "@/lib/program";
-import { getSettings, applicationsOpen } from "@/lib/settings";
+import { PROGRAM, PHASES, TOOLING, LATE_SEMESTER_NOTE } from "@/lib/program";
+import { getSettings, getApplicationStatus } from "@/lib/settings";
 import { formatDate } from "@/lib/utils";
-import { JellyfishMark } from "@/components/experiments/jellyfish-mark";
+import { JellyfishMark } from "@/components/jellyfish-mark";
 
 export default async function HomePage() {
   const settings = await getSettings();
-  const open = applicationsOpen(settings);
-  const showMascot = process.env.NEXT_PUBLIC_SHOW_MASCOT === "true";
+  const applicationStatus = getApplicationStatus(settings);
+  const open = applicationStatus === "open";
+  const applicationLabel = applicationStatus === "upcoming"
+    ? `open ${formatDate(settings.applications_open, { year: undefined })}`
+    : applicationStatus;
 
   const facts = [
     ["Length", PROGRAM.lengthWeeks],
@@ -18,55 +21,56 @@ export default async function HomePage() {
     ["Cost", "Free"],
     [
       "Demo Day",
-      settings.demo_day_date ? formatDate(settings.demo_day_date) : "End of the semester",
+      settings.demo_day_date ? formatDate(settings.demo_day_date) : "TBD",
     ],
   ];
 
   return (
     <div className="space-y-20">
-      <section className="relative isolate max-w-4xl overflow-hidden py-4 sm:overflow-visible sm:py-8">
-        {showMascot ? (
-          <JellyfishMark className="absolute -right-44 -top-8 -z-10 hidden size-80 rotate-6 text-brand opacity-55 sm:block" />
-        ) : null}
-        <p className="text-label">{PROGRAM.term} · Applications {open ? "open" : "closed"}</p>
-        <h1 className="mt-5 max-w-3xl text-5xl font-semibold leading-[1.05] tracking-[-0.045em] sm:text-7xl">
-          <span className="block">Build a project.</span>
-          <span className="block">Ship it this semester.</span>
-        </h1>
-        <p className="mt-7 max-w-2xl text-xl leading-8 text-muted-foreground sm:text-2xl sm:leading-9">
-          SOCIS Incubator helps Computer Science and Software Engineering students take one
-          useful idea from proposal to working demo.
-        </p>
-        <p className="prose-page mt-4 leading-7 text-muted-foreground">
-          Apply alone or with people you know. You can bring an idea, but you do not need one.
-          Expect four to six hours of project work each week.
-        </p>
+      <section className="grid items-center gap-6 py-4 sm:py-8 lg:grid-cols-[minmax(0,1fr)_15rem]">
+        <div>
+          <p className="text-label">{PROGRAM.term} · Applications {applicationLabel}</p>
+          <h1 className="mt-5 max-w-3xl text-5xl font-semibold leading-[1.05] tracking-[-0.045em] sm:text-7xl">
+            <span className="block">Build a project.</span>
+            <span className="block">Ship it this semester.</span>
+          </h1>
+          <p className="mt-7 max-w-2xl text-xl leading-8 text-muted-foreground sm:text-2xl sm:leading-9">
+            SOCIS Incubator helps Computer Science and Software Engineering students take one
+            useful idea to a working project by the end of the semester.
+          </p>
+          <p className="prose-page mt-4 leading-7 text-muted-foreground">
+            Bring friends or meet people around an idea and apply together. Solo applicants are
+            welcome too. Build your project, pitch at the Wood Centre on November 19, and present
+            at SOCIS Demo Day (date TBD).
+          </p>
 
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          {open ? (
-            <Button asChild>
-              <Link href="/apply">Apply for Fall 2026</Link>
-            </Button>
-          ) : (
-            <Button variant="outline" disabled>
-              Applications are closed
-            </Button>
-          )}
-          <Link href="/about" className="text-sm text-link underline underline-offset-4 hover:no-underline">
-            How the program works
-          </Link>
-          {open ? (
-            <Link href="/ideas" className="text-sm text-link underline underline-offset-4 hover:no-underline">
-              Find an idea or teammates
+          <div className="mt-8 flex flex-wrap items-center gap-4">
+            {open ? (
+              <Button asChild>
+                <Link href="/apply">Apply for Fall 2026</Link>
+              </Button>
+            ) : (
+              <Button variant="outline" disabled>
+                {applicationStatus === "upcoming" ? `Applications ${applicationLabel}` : "Applications are closed"}
+              </Button>
+            )}
+            <Link href="/about" className="text-sm text-link underline underline-offset-4 hover:no-underline">
+              How the program works
             </Link>
+            {open ? (
+              <Link href="/ideas" className="text-sm text-link underline underline-offset-4 hover:no-underline">
+                Find an idea or teammates
+              </Link>
+            ) : null}
+          </div>
+
+          {open && settings.applications_close ? (
+            <p className="mt-4 text-sm text-muted-foreground">
+              Applications close {formatDate(settings.applications_close)}.
+            </p>
           ) : null}
         </div>
-
-        {open && settings.applications_close ? (
-          <p className="mt-4 text-sm text-muted-foreground">
-            Applications close {formatDate(settings.applications_close)}.
-          </p>
-        ) : null}
+        <JellyfishMark className="size-36 justify-self-center text-brand sm:size-48 lg:size-60 lg:rotate-6" />
       </section>
 
       <section aria-label="Program details" className="border-y border-border">
@@ -94,7 +98,10 @@ export default async function HomePage() {
               <div className="font-mono text-xs text-muted-foreground">
                 {String(phase.number).padStart(2, "0")}
               </div>
-              <div className="text-sm text-muted-foreground">{phase.weeks}</div>
+              <div className="text-sm text-muted-foreground">
+                <p>{phase.weeks}</p>
+                <p className="mt-1 text-xs">{phase.dates}</p>
+              </div>
               <div>
                 <h3 className="font-medium">{phase.name}</h3>
                 <p className="prose-page mt-1 leading-7 text-muted-foreground">{phase.summary}</p>
@@ -102,6 +109,8 @@ export default async function HomePage() {
             </li>
           ))}
         </ol>
+
+        <p className="prose-page mt-5 text-sm text-muted-foreground">{LATE_SEMESTER_NOTE}</p>
 
         <p className="mt-8 text-sm">
           <Link href="/timeline" className="text-link underline underline-offset-4 hover:no-underline">

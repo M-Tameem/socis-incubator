@@ -1,8 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/page-header";
+import { JellyfishMark } from "@/components/jellyfish-mark";
 import { Button } from "@/components/ui/button";
-import { PHASES, ELIGIBILITY, EXPECTATIONS, EXEC_ROLES, CHECK_IN_QUESTIONS, PROGRAM } from "@/lib/program";
+import { PHASES, ELIGIBILITY, EXPECTATIONS, EXEC_ROLES, CHECK_IN_QUESTIONS, PROGRAM, LATE_SEMESTER_NOTE } from "@/lib/program";
 
 export const metadata: Metadata = {
   title: "How it works",
@@ -14,16 +15,17 @@ export default function AboutPage() {
     <div className="space-y-14">
       <PageHeader
         title="How it works"
+        illustration={<JellyfishMark className="size-36 justify-self-center text-brand sm:size-48" />}
         lede="Teams of three to five build one project over a semester. SOCIS sets deadlines and helps when a team gets stuck."
       />
 
       <section>
         <h2 className="text-xl font-semibold">What you leave with</h2>
         <ul className="prose-page mt-4 list-disc space-y-2 pl-5 text-muted-foreground">
-          <li>A working project with a useful README</li>
+          <li>A working project by the end of the semester, with a useful README</li>
           <li>Experience planning and reviewing code with a team</li>
           <li>Feedback from people outside your group</li>
-          <li>A public Demo Day presentation</li>
+          <li>A pitch at the Wood Centre on November 19 and a SOCIS Demo Day presentation (date TBD)</li>
         </ul>
       </section>
 
@@ -49,17 +51,17 @@ export default function AboutPage() {
         <h2 className="text-xl font-semibold">How teams are formed</h2>
         <div className="prose-page mt-3 space-y-3 leading-7 text-muted-foreground">
           <p>
-            Everyone applies separately. If you already know who you want to work with, each person
-            lists the others in their application.
+            Bring a group of three to five friends, or meet people around an idea and apply
+            together. Each person fills out the same application and lists the same teammates
+            and project name so we can record your group.
           </p>
           <p>
-            The idea portal is available until applications close. It helps students discuss ideas
-            and exchange contact details, but it does not create an official team.
+            Use the idea portal to share an idea, chat with people who like it, and form a group.
+            You can revise your application, teammates, and project idea through September 27.
           </p>
           <p>
-            SOCIS reviews teammate preferences, interests, experience, and availability. Executives
-            then confirm teams of three to five and assign an executive contact. Preferences are
-            considered but cannot be guaranteed.
+            If you do not have a group or an idea yet, apply solo by the same deadline. SOCIS
+            will help you find a team and give each group an executive contact for support.
           </p>
         </div>
         <p className="mt-5 text-sm">
@@ -71,12 +73,13 @@ export default function AboutPage() {
 
       <section>
         <h2 className="text-xl font-semibold">The four phases</h2>
+        <p className="prose-page mt-3 text-muted-foreground">{LATE_SEMESTER_NOTE}</p>
         <ol className="mt-6 space-y-10">
           {PHASES.map((phase) => (
             <li key={phase.number}>
               <div className="flex flex-wrap items-baseline gap-x-3">
                 <h3 className="text-base font-medium">{phase.name}</h3>
-                <span className="text-sm text-muted-foreground">{phase.weeks}</span>
+                <span className="text-sm text-muted-foreground">{phase.weeks} · {phase.dates}</span>
               </div>
               <p className="prose-page mt-1 text-muted-foreground">{phase.summary}</p>
               <ul className="prose-page mt-3 list-disc space-y-1.5 pl-5 text-muted-foreground">
@@ -105,16 +108,16 @@ export default function AboutPage() {
       <section>
         <h2 className="text-xl font-semibold">Keep the scope small</h2>
         <p className="prose-page mt-2 text-muted-foreground">
-          The project must be usable by Week 11. We review proposals in Week 2 and cut features
-          that put the deadline at risk. After feature freeze, teams fix and document what they
-          already have.
+          Build a working project by semester&apos;s end. Choose a small first version, then use
+          feedback and check-ins to keep it achievable. Weeks 10–13 focus on finalizing and
+          presenting; detailed arrangements are TBD, with the Wood Centre pitch on November 19.
         </p>
       </section>
 
       <section>
         <h2 className="text-xl font-semibold">Money</h2>
         <p className="prose-page mt-2 text-muted-foreground">
-          Teams can request about $100 to $150 for approved project costs. Ask Finance and
+          Teams can request microgrants of {PROGRAM.microgrant} for approved project costs. Ask Finance and
           Operations before spending and keep the receipt. Reimbursement is processed after
           the team presents at Demo Day.
         </p>
@@ -139,7 +142,8 @@ export default function AboutPage() {
       <section className="border-t border-border pt-10">
         <h2 className="text-xl font-semibold">Apply</h2>
         <p className="prose-page mt-2 text-muted-foreground">
-          Everyone submits their own form. Teammate preferences and project ideas are optional.
+          Apply with your group or on your own using the same form. Add or revise your teammates
+          and project idea until September 27.
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-4">
           <Button asChild>

@@ -94,7 +94,7 @@ export default async function StudentDemoPage() {
             <CardHeader><CardTitle>What happens here</CardTitle></CardHeader>
             <CardContent className="space-y-3 text-sm leading-6 text-muted-foreground">
               <p>The student can see the current decision but cannot see reviewer notes.</p>
-              <p>Existing groups still apply separately and name the same preferred teammates.</p>
+              <p>Friends apply together: each person lists the same teammates and project name.</p>
               <p>Once executives add the student to a team, the dashboard changes from application status to project work.</p>
             </CardContent>
           </Card>

@@ -27,7 +27,7 @@ export default async function AdminApplicationsPage({
   const { status: filter } = await searchParams;
   const supabase = await createClient();
 
-  // The whole table is 30–50 rows, so we fetch once and filter in memory
+  // The pilot cohort is small, so we fetch once and filter in memory
   // rather than branching the query builder.
   const { data: all } = await supabase
     .from("applications")

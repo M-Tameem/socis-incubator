@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { safeRedirectPath } from "@/lib/navigation";
+import { getSiteUrl } from "@/lib/site-url";
 
 export type LoginState = { error?: string; sent?: boolean; email?: string };
 
@@ -14,7 +15,7 @@ export async function sendMagicLink(_prev: LoginState, formData: FormData): Prom
   }
 
   const supabase = await createClient();
-  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const site = getSiteUrl();
 
   const { error } = await supabase.auth.signInWithOtp({
     email,

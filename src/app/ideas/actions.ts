@@ -35,7 +35,7 @@ export async function createIdea(
   }
 
   if (!applicationsOpen(await getSettings())) {
-    return { errors: { form: "The idea portal closed with applications." }, values };
+    return { errors: { form: "The idea portal is available during the application period. Check the timeline for dates." }, values };
   }
 
   const parsed = ideaPostSchema.safeParse(values);
@@ -90,7 +90,7 @@ export async function expressInterest(
   }
 
   if (!applicationsOpen(await getSettings())) {
-    return { error: "The idea portal closed with applications.", message, displayName };
+    return { error: "The idea portal is available during the application period. Check the timeline for dates.", message, displayName };
   }
 
   const supabase = await createClient();

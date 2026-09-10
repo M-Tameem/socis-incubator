@@ -8,7 +8,6 @@ const KEYS = [
   "applications_open",
   "applications_close",
   "teams_announced",
-  "proposals_due",
   "demo_day_date",
   "demo_day_time",
   "demo_day_location",

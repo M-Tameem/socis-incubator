@@ -106,7 +106,7 @@ export default async function ExecutiveDemoPage() {
       <section className="space-y-5" aria-labelledby="exec-teams">
         <div>
           <h2 id="exec-teams" className="text-xl font-semibold">Team formation</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Portal conversations and teammate preferences inform placement. Executives create the official record.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Record groups that applied together and help solo applicants find teammates.</p>
         </div>
         <Card>
           <CardContent className="pt-5">

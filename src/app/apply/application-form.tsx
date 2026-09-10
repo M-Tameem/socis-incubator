@@ -1,7 +1,9 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { submitApplication, type ApplyState } from "@/app/apply/actions";
+import Link from "next/link";
+import { submitApplication, updateApplication, type ApplyState } from "@/app/apply/actions";
+import type { ApplicationInput } from "@/lib/validation";
 import { Field, SubmitButton } from "@/components/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,17 +18,29 @@ const HOURS = [
   "More than 10 hours a week",
 ];
 
-export function ApplicationForm() {
-  const [state, action] = useActionState<ApplyState, FormData>(submitApplication, {});
-  const [withTeam, setWithTeam] = useState(false);
-  const [withIdea, setWithIdea] = useState(false);
+export function ApplicationForm({ initialValues, applicationId, updatedAt }: {
+  initialValues?: Partial<ApplicationInput>;
+  applicationId?: string;
+  updatedAt?: string;
+}) {
+  const editing = Boolean(applicationId);
+  const [state, action] = useActionState<ApplyState, FormData>(editing ? updateApplication : submitApplication, {});
+  const [withTeam, setWithTeam] = useState(initialValues?.applying_with_team ?? false);
+  const [withIdea, setWithIdea] = useState(initialValues?.has_project_idea ?? false);
 
   const err = state.errors ?? {};
-  const val = state.values ?? {};
+  const val = state.values ?? initialValues ?? {};
 
   return (
     <form action={action} className="max-w-2xl space-y-10" noValidate>
       {err.form ? <Alert variant="error">{err.form}</Alert> : null}
+      {state.saved ? <Alert variant="success">Changes saved. Your application is up to date.</Alert> : null}
+      {editing ? (
+        <>
+          <input type="hidden" name="application_id" value={applicationId} />
+          <input type="hidden" name="updated_at" value={state.updatedAt ?? updatedAt} />
+        </>
+      ) : null}
 
       <section className="space-y-6">
         <h2 className="text-lg font-semibold">About you</h2>
@@ -44,7 +58,7 @@ export function ApplicationForm() {
         <Field
           label="Email"
           name="email"
-          hint="Program email will go to this address."
+          hint={editing ? "This is the email you used to apply and sign in." : "Use this same address to sign in and edit your application later."}
           error={err.email}
           required
         >
@@ -53,6 +67,7 @@ export function ApplicationForm() {
             name="email"
             type="email"
             defaultValue={val.email}
+            readOnly={editing}
             aria-invalid={Boolean(err.email)}
             autoComplete="email"
           />
@@ -146,14 +161,14 @@ export function ApplicationForm() {
               checked={withTeam}
               onChange={(e) => setWithTeam(e.target.checked)}
             />
-            <span>I am applying with people I already know</span>
+            <span>I am applying with a group</span>
           </label>
 
           {withTeam ? (
             <Field
               label="Your teammates"
               name="teammates"
-              hint="Names and emails, one per line. Everyone still needs to submit their own application."
+              hint="List your group's names and emails, one per line. Each person submits this same form and lists the same teammates."
               error={err.teammates}
             >
               <Textarea id="teammates" name="teammates" rows={3} defaultValue={val.teammates} />
@@ -177,7 +192,7 @@ export function ApplicationForm() {
             <Field
               label="Your project idea"
               name="project_idea"
-              hint="Describe the problem and who has it. We will review the scope in Week 2."
+              hint="Give it a name and describe what you want to build and who it helps. If applying together, use the same project name."
               error={err.project_idea}
             >
               <Textarea id="project_idea" name="project_idea" rows={5} defaultValue={val.project_idea} />
@@ -186,8 +201,9 @@ export function ApplicationForm() {
         </div>
 
         <p className="text-sm text-muted-foreground">
-          Most students apply alone. Use the idea portal if you want to meet possible teammates.
-          SOCIS reviews preferences and confirms the final teams.
+          Apply with friends, or meet people around an idea and apply together. Solo applicants
+          are welcome too: leave these options unticked and SOCIS will help you find a group.
+          You can add or change teammates and your idea until the application deadline.
         </p>
       </section>
 
@@ -229,9 +245,19 @@ export function ApplicationForm() {
       </section>
 
       <div className="flex items-center gap-4 border-t border-border pt-8">
-        <SubmitButton pendingLabel="Submitting…">Submit application</SubmitButton>
-        <p className="text-sm text-muted-foreground">You will get a confirmation email.</p>
+        <SubmitButton pendingLabel={editing ? "Saving…" : "Submitting…"}>
+          {editing ? "Save changes" : "Submit application"}
+        </SubmitButton>
+        <p className="text-sm text-muted-foreground">
+          {editing ? "You can revise these answers until the deadline." : "You will get a confirmation email."}
+        </p>
       </div>
+      {!editing ? (
+        <p className="text-sm text-muted-foreground">
+          Already applied?{" "}
+          <Link href="/login?next=/apply" className="text-link underline underline-offset-4">Sign in to edit your application</Link>.
+        </p>
+      ) : null}
     </form>
   );
 }

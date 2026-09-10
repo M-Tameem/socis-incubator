@@ -9,8 +9,7 @@ export const metadata: Metadata = { title: "Program settings" };
 const FIELDS = [
   { key: "applications_open", label: "Applications open", type: "date" },
   { key: "applications_close", label: "Applications close", type: "date" },
-  { key: "teams_announced", label: "Teams announced", type: "date" },
-  { key: "proposals_due", label: "Proposals due", type: "date" },
+  { key: "teams_announced", label: "Help finding teammates begins", type: "date" },
   { key: "demo_day_date", label: "Demo Day date", type: "date" },
   { key: "demo_day_time", label: "Demo Day time", type: "text" },
   { key: "demo_day_location", label: "Demo Day location", type: "text" },

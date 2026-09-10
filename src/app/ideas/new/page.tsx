@@ -15,8 +15,8 @@ export default async function NewIdeaPage() {
   if (!applicationsOpen(settings)) {
     return (
       <div className="space-y-8">
-        <PageHeader title="The idea portal is closed" />
-        <Alert>New ideas closed with applications. Existing posts are still available to read.</Alert>
+        <PageHeader title="The idea portal is not open" />
+        <Alert>New ideas are available during the application period. Check the timeline for dates.</Alert>
       </div>
     );
   }

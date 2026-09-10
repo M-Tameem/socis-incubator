@@ -53,6 +53,8 @@ export type Application = {
   updated_at: string;
 };
 
+export type ApplicantApplication = Omit<Application, "user_id" | "reviewer_notes" | "team_id">;
+
 export type Team = {
   id: string;
   name: string;
@@ -321,6 +323,14 @@ export type Database = {
     };
     Views: Record<never, never>;
     Functions: {
+      get_my_application: {
+        Args: Record<PropertyKey, never>;
+        Returns: ApplicantApplication[];
+      };
+      revise_my_application: {
+        Args: { application_id: string; application_values: Record<string, string | boolean | null>; expected_updated_at: string };
+        Returns: string;
+      };
       get_project_members: {
         Args: { project_team: string };
         Returns: {

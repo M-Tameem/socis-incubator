@@ -8,18 +8,52 @@ export const PROGRAM = {
   name: "SOCIS Computer Science Incubator",
   term: "Fall 2026",
   lengthWeeks: "12–13 weeks",
-  targetStudents: "30–50 students",
-  targetTeams: "6–10 teams",
+  targetStudents: "45–75 students",
+  targetTeams: "15 teams",
   teamSize: "3–5 students",
-  contactEmail: "incubator@socis.ca",
+  microgrant: "$50–$75",
+  contactEmail: "socis@uoguelph.ca",
+  websiteUrl: "https://socis.ca",
   discordUrl: "https://discord.gg/socis",
   githubOrg: "https://github.com/socis",
+  woodCentreEventsUrl: "https://www.uoguelph.ca/wood-centre/current-events",
 } as const;
+
+export const PROGRAM_DATES = {
+  applications_open: "2026-09-09",
+  applications_close: "2026-09-27",
+  teams_announced: "2026-09-22",
+  proposals_due: "2026-09-27",
+  demo_day_date: "",
+  demo_day_time: "",
+  demo_day_location: "",
+} as const;
+
+export const LATE_SEMESTER_NOTE =
+  "You'll finish the semester with a working project and somewhere to present it. Weeks 10–13 focus on finishing and preparing to share your work. The remaining event schedule, SOCIS Demo Day's date, industry participation, and prizes are TBD; we'll share updates as plans are confirmed.";
+
+/** Consecutive Monday–Sunday weeks, starting September 14, 2026. */
+export const PROGRAM_WEEKS = [
+  { number: 1, dates: "September 14–20", focus: "Applications and finding teammates" },
+  { number: 2, dates: "September 21–27", focus: "Find a group, shape an idea, and submit or revise your application" },
+  { number: 3, dates: "September 28–October 4", focus: "Final team placements, project planning, and development kickoff" },
+  { number: 4, dates: "October 5–11", focus: "Build the first version · check-in October 11" },
+  { number: 5, dates: "October 12–18", focus: "Development and team work" },
+  { number: 6, dates: "October 19–25", focus: "Development · check-in October 25" },
+  { number: 7, dates: "October 26–November 1", focus: "Development and feedback" },
+  { number: 8, dates: "November 2–8", focus: "Development · check-in November 8" },
+  { number: 9, dates: "November 9–15", focus: "Testing the first usable version" },
+  { number: 10, dates: "November 16–22", focus: "Wood Centre pitch November 19 · finalization schedule TBD" },
+  { number: 11, dates: "November 23–29", focus: "Finalize the project · details TBD" },
+  { number: 12, dates: "November 30–December 6", focus: "Finalize, test, and rehearse · details TBD" },
+  { number: 13, dates: "December 7–13", focus: "Finish a working project and prepare to present · Demo Day date TBD" },
+] as const;
 
 export type Phase = {
   number: number;
   name: string;
   weeks: string;
+  dates: string;
   summary: string;
   items: string[];
 };
@@ -29,13 +63,14 @@ export const PHASES: Phase[] = [
     number: 1,
     name: "Recruitment and team formation",
     weeks: "Weeks 1–2",
-    summary: "Apply, meet your team, and agree on a project you can finish.",
+    dates: "September 14–27",
+    summary: "Bring friends or find people around an idea, then apply together.",
     items: [
       "Every student submits their own application",
-      "Use the idea portal to find possible collaborators",
-      "List preferred teammates in your application",
-      "SOCIS matches applicants by interests, experience, and availability",
-      "Each team submits a short proposal",
+      "Use the idea portal to meet people and build a group",
+      "List the same teammates and project name when applying together",
+      "Applying solo is welcome; SOCIS will help you find a group",
+      "Submit or revise your application and optional idea by September 27",
       "SOCIS assigns one executive contact to each team",
     ],
   },
@@ -43,6 +78,7 @@ export const PHASES: Phase[] = [
     number: 2,
     name: "Project planning",
     weeks: "Week 3",
+    dates: "September 28–October 4",
     summary: "Set the scope, divide the work, and prepare the repository.",
     items: [
       "Name the user and the problem",
@@ -55,8 +91,9 @@ export const PHASES: Phase[] = [
   {
     number: 3,
     name: "Development",
-    weeks: "Weeks 4–11",
-    summary: "Build for eight weeks. Send a short update every other week.",
+    weeks: "Weeks 4–9",
+    dates: "October 5–November 15",
+    summary: "Build your project and share progress every other week.",
     items: [
       "Submit one team check-in every two weeks",
       "Raise blockers while there is still time to fix them",
@@ -66,15 +103,17 @@ export const PHASES: Phase[] = [
   },
   {
     number: 4,
-    name: "Finalization and Demo Day",
-    weeks: "Weeks 11–13",
-    summary: "Stop adding features. Make the current build reliable and prepare the demo.",
+    name: "Finalization and presentations",
+    weeks: "Weeks 10–13",
+    dates: "November 16–December 13 · details TBD",
+    summary: "Finish a working project by semester's end. Pitch at the Wood Centre on November 19 and prepare for SOCIS Demo Day; its date and the remaining event schedule are TBD.",
     items: [
-      "Fix the bugs that could break the demo",
+      "Pitch at the Wood Centre's Open Pitch Night on November 19",
+      "Finish the project and fix the bugs that could break the demo",
       "Deploy if the project can run online",
       "Write a useful README",
       "Rehearse on the computer you will present from",
-      "Present at Demo Day",
+      "Present at SOCIS Demo Day; date TBD",
     ],
   },
 ];
@@ -87,19 +126,19 @@ export type Milestone = {
 
 export const MILESTONES: Milestone[] = [
   {
-    when: "Week 1",
+    when: "September 9",
     label: "Applications open",
-    detail: "Apply individually, with a team, or with your own idea.",
+    detail: "Apply with your friends or a group formed around an idea. Solo applicants use the same form.",
   },
   {
     when: "Week 2",
-    label: "Teams finalized",
-    detail: "You meet your team and get an executive contact.",
+    label: "Find your people",
+    detail: "Meet around an idea, form a group, and apply together. SOCIS is available to help applicants looking for teammates.",
   },
   {
     when: "Week 2",
-    label: "Project proposals due",
-    detail: "Each team defines its first usable version. SOCIS checks the scope.",
+    label: "Applications and project ideas due",
+    detail: "September 27 is the deadline to submit or revise the same application, whether you have a group, an idea, or are applying solo.",
   },
   {
     when: "Week 3",
@@ -107,24 +146,29 @@ export const MILESTONES: Milestone[] = [
     detail: "Set up the repository, open the first issues, and start building.",
   },
   {
-    when: "Weeks 4–11",
+    when: "Weeks 4–9",
     label: "Bi-weekly check-ins",
     detail: "One short written update from each team every two weeks.",
   },
   {
-    when: "Weeks 6–10",
+    when: "Throughout the semester",
     label: "Workshops and mentor sessions",
     detail: "Events are posted as they are confirmed.",
   },
   {
-    when: "Week 11",
-    label: "Feature freeze",
-    detail: "Stop adding features and make the current build dependable.",
+    when: "November 19",
+    label: "Pitch at the Wood Centre",
+    detail: "Present your project at Open Pitch Night at the Bullring and get feedback from judges.",
   },
   {
-    when: "Week 12/13",
+    when: "Weeks 10–13 · TBD",
+    label: "Finalize your project",
+    detail: "Finish a working project by semester's end. Detailed finalization and presentation arrangements will follow.",
+  },
+  {
+    when: "Date TBD",
     label: "Demo Day",
-    detail: "Each team gives a short presentation and live demo.",
+    detail: "Each team presents its working project. The date, event format, and industry participation are TBD.",
   },
   {
     when: "After Demo Day",
@@ -138,7 +182,8 @@ export const EXPECTATIONS = [
   "Submit one team check-in every two weeks",
   "Keep the code in a team GitHub repository",
   "Reply when your executive contact checks in",
-  "Present at Demo Day",
+  "Build a working project by the end of the semester",
+  "Pitch at the Wood Centre on November 19 and present at SOCIS Demo Day (date TBD)",
 ];
 
 export const ELIGIBILITY = [
@@ -154,17 +199,27 @@ export const FAQS: Faq[] = [
   {
     question: "Do I need a project idea or a team to apply?",
     answer:
-      "No. Everyone submits their own application. List preferred teammates if you have them, or use the idea portal to meet people. SOCIS confirms final teams after applications close.",
+      "Bring friends or meet people around an idea and apply together. If you do not have a group or project yet, apply solo by September 27 and SOCIS will help you find a team. Everyone uses the same application.",
   },
   {
-    question: "Does contacting someone in the idea portal put us on a team?",
+    question: "How do we apply after meeting in the idea portal?",
     answer:
-      "No. It only lets you exchange contact details and discuss working together. Each person still applies separately and lists preferred teammates. SOCIS makes the final placement.",
+      "Chat about the idea, decide who wants to work together, then each fill out the application with the same teammates and project name. You can revise your answers until September 27 as your group takes shape.",
   },
   {
     question: "Can an existing group apply together?",
     answer:
-      "Yes, but every person must submit their own application and name the same teammates. SOCIS will try to keep the group together if the team size, availability, and project scope work.",
+      "Yes. Form a group of three to five with your friends and apply together. Each person fills out the same form and lists the same teammates and project name so we can record your group.",
+  },
+  {
+    question: "Can I edit my application after submitting?",
+    answer:
+      "Yes. Sign in with the email you applied with and return to Apply. You can change teammates, your project idea, and your other answers through September 27. Your latest saved version is your submission.",
+  },
+  {
+    question: "Is a project idea a separate application?",
+    answer:
+      "No. Add your idea to the same application you use to join the incubator. Teammates and project ideas are optional, and the September 27 deadline is the same for everyone. Teams develop their detailed project plan after joining.",
   },
   {
     question: "How much time does this take?",
@@ -174,12 +229,12 @@ export const FAQS: Faq[] = [
   {
     question: "What counts as an MVP?",
     answer:
-      "The smallest version someone can use from start to finish. We review scope in Week 2 and will ask you to cut features if the plan is too large.",
+      "The smallest version someone can use from start to finish. Pick a scope your team can build by the end of the semester; SOCIS can help you keep it manageable.",
   },
   {
     question: "Do I need to be an experienced developer?",
     answer:
-      "No. You should be able to write some code, but you do not need prior project experience. We try to mix experience levels when forming teams.",
+      "No. You should be able to write some code, but you do not need prior project experience. Build with friends, learn from your group, and ask SOCIS for help when you need it.",
   },
   {
     question: "Who owns the project?",
@@ -189,17 +244,27 @@ export const FAQS: Faq[] = [
   {
     question: "What if my team falls behind or falls apart?",
     answer:
-      "Tell your executive contact early. We may cut scope or change the team. Waiting makes the options worse.",
+      "Tell your executive contact early. We will work with you to adjust the scope or help fill a gap in the group so you can keep building.",
   },
   {
     question: "Is there funding for my project?",
     answer:
-      "Teams can request about $100 to $150 for approved costs such as hosting or a domain. Ask Finance and Operations before spending. Reimbursement requires a Demo Day presentation.",
+      `Teams can request microgrants of ${PROGRAM.microgrant} for approved costs such as hosting or a domain. Ask Finance and Operations before spending. Reimbursement requires a Demo Day presentation.`,
   },
   {
-    question: "Do I have to present at Demo Day?",
+    question: "What will we build and present?",
     answer:
-      "Yes. Show what works and explain what did not. Teams must present to receive expense reimbursement.",
+      "Your team will build a working project by semester's end, pitch it at the Wood Centre's Open Pitch Night on November 19, and present it at SOCIS Demo Day. The Demo Day date is TBD. Presenting at Demo Day is required for expense reimbursement.",
+  },
+  {
+    question: "Is the end-of-semester schedule confirmed?",
+    answer:
+      "You'll finish the semester with a working project and somewhere to present it. The Wood Centre's Open Pitch Night is November 19. Weeks 10–13 focus on finishing and preparing to share your work; the remaining event schedule and SOCIS Demo Day's date and format are TBD.",
+  },
+  {
+    question: "Will there be prizes or industry collaborators?",
+    answer:
+      "Prizes and industry participation are TBD. We'll announce any collaborators as they are confirmed. Throughout the semester, you will build with a team, get feedback, and finish with a project you can show.",
   },
   {
     question: "What if I get accepted and then need to drop out?",

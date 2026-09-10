@@ -4,17 +4,14 @@ import { createClient } from "@/lib/supabase/server";
 import { ProposalForm } from "@/app/dashboard/proposal/proposal-form";
 import { StatusBadge } from "@/components/status-badge";
 import { Alert } from "@/components/ui/alert";
-import { getSettings } from "@/lib/settings";
-import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Project proposal" };
 
 export default async function ProposalPage() {
   const team = await getMyTeam();
-  const settings = await getSettings();
 
   if (!team) {
-    return <Alert>You need to be on a team before you can submit a proposal.</Alert>;
+    return <Alert>Add your project idea to your application. Your group can develop its detailed project plan here after joining.</Alert>;
   }
 
   const supabase = await createClient();
@@ -32,10 +29,9 @@ export default async function ProposalPage() {
           {proposal ? <StatusBadge status={proposal.status} /> : null}
         </div>
         <p className="prose-page mt-3 text-muted-foreground">
-          One proposal per team, submitted in Week 2
-          {settings.proposals_due ? ` by ${formatDate(settings.proposals_due)}` : ""}. We read it
-          for scope more than polish. If we think you cannot finish it in ten weeks, we will
-          say so and help you cut it down.
+          Develop your group&apos;s project plan after joining. Your application already includes
+          your initial idea; use this space to agree on a first version, roles, and next steps.
+          Your executive contact can help keep the scope achievable.
         </p>
       </div>
 

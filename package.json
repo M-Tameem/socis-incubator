@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "check": "npm run lint && npm run typecheck && npm run build"
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "check": "npm run lint && npm run test && npm run typecheck && npm run build"
   },
   "engines": {
     "node": ">=22.13.0"
@@ -31,6 +32,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@tailwindcss/postcss": "^4.0.9",
     "@types/node": "^22.13.5",
     "@types/react": "^19.0.10",

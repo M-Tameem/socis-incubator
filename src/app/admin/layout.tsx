@@ -13,6 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <NavLink href="/admin/teams">Teams</NavLink>
           <NavLink href="/admin/check-ins">Check-ins</NavLink>
           <NavLink href="/admin/events">Events</NavLink>
+          <NavLink href="/admin/moderation">Moderation</NavLink>
           <NavLink href="/admin/settings">Settings</NavLink>
         </nav>
         <p className="text-sm text-muted-foreground">{profile.email}</p>

@@ -28,6 +28,9 @@ export function SiteFooter() {
           <p className="font-medium">Contact</p>
           <ul className="mt-2 space-y-1 text-muted-foreground">
             <li>
+              <a href={PROGRAM.websiteUrl} className="hover:text-foreground">socis.ca</a>
+            </li>
+            <li>
               <a href={`mailto:${PROGRAM.contactEmail}`} className="hover:text-foreground">
                 {PROGRAM.contactEmail}
               </a>

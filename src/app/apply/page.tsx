@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { ApplicationForm } from "@/app/apply/application-form";
-import { getSettings, applicationsOpen } from "@/lib/settings";
+import { getSettings, getApplicationStatus } from "@/lib/settings";
 import { formatDate } from "@/lib/utils";
 import { Alert } from "@/components/ui/alert";
+import { createClient } from "@/lib/supabase/server";
+import { applicationFormValues } from "@/lib/application-form";
 
 export const metadata: Metadata = {
   title: "Apply",
@@ -13,9 +15,22 @@ export const metadata: Metadata = {
 
 export default async function ApplyPage() {
   const settings = await getSettings();
-  const open = applicationsOpen(settings);
+  const status = getApplicationStatus(settings);
 
-  if (!open) {
+  if (status === "upcoming") {
+    return (
+      <div className="space-y-8">
+        <PageHeader title={`Applications open ${formatDate(settings.applications_open, { year: undefined })}`} />
+        <p className="prose-page text-muted-foreground">
+          Start thinking about what you would like to build and who you might build it with.
+          {settings.applications_close ? ` Applications run through ${formatDate(settings.applications_close)}.` : " Check back when applications open."}
+        </p>
+        <Link href="/timeline" className="text-link underline underline-offset-4">See the semester timeline</Link>
+      </div>
+    );
+  }
+
+  if (status === "closed") {
     return (
       <div className="space-y-8">
         <PageHeader title="Applications are closed" />
@@ -30,11 +45,21 @@ export default async function ApplyPage() {
     );
   }
 
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: applications, error } = user?.email_confirmed_at
+    ? await supabase.rpc("get_my_application")
+    : { data: null, error: null };
+  if (error) {
+    return <Alert variant="error">We could not load your application. Refresh and try again.</Alert>;
+  }
+  const application = applications?.[0];
+
   return (
     <div className="space-y-10">
       <PageHeader
-        title="Apply"
-        lede="Everyone submits their own application. List preferred teammates if you have them. A project idea is optional."
+        title={application ? "Edit your application" : "Apply"}
+        lede="Bring your friends or find people around an idea and apply together. Applying solo? We will help you find a group. Everyone uses this same form."
       />
 
       <p className="prose-page text-sm leading-6 text-muted-foreground">
@@ -42,14 +67,19 @@ export default async function ApplyPage() {
         <Link href="/ideas" className="text-link underline underline-offset-4 hover:no-underline">
           idea portal
         </Link>
-        . SOCIS confirms final teams after applications close.
+        . Each group member lists the same teammates and project name. You can update your
+        answers as your group or idea takes shape.
       </p>
 
       {settings.applications_close ? (
-        <Alert>Applications close {formatDate(settings.applications_close)}.</Alert>
+        <Alert>Submit and revise your application through {formatDate(settings.applications_close)}.</Alert>
       ) : null}
 
-      <ApplicationForm />
+      <ApplicationForm
+        initialValues={application ? applicationFormValues(application) : { email: user?.email ?? "" }}
+        applicationId={application?.id}
+        updatedAt={application?.updated_at}
+      />
     </div>
   );
 }

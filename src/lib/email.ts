@@ -1,9 +1,11 @@
 import { Resend } from "resend";
+import { PROGRAM } from "@/lib/program";
+import { getSiteUrl } from "@/lib/site-url";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 const FROM = process.env.EMAIL_FROM ?? "SOCIS Incubator <incubator@socis.ca>";
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const SITE = getSiteUrl();
 
 type Mail = { to: string | string[]; subject: string; body: string[] };
 
@@ -38,7 +40,7 @@ SOCIS Computer Science Incubator &middot; <a href="${safeSite}" style="color:#7d
   }
 
   try {
-    await resend.emails.send({ from: FROM, to, subject, text, html });
+    await resend.emails.send({ from: FROM, replyTo: PROGRAM.contactEmail, to, subject, text, html });
   } catch (error) {
     // Never fail a student's submission because email delivery hiccupped.
     console.error("Resend error", error);
@@ -52,7 +54,8 @@ export function sendApplicationReceived(to: string, name: string) {
     body: [
       `Hi ${name},`,
       "Thanks for applying to the SOCIS Computer Science Incubator. Your application is in, and we review them as they arrive.",
-      "You'll hear back about team placement once applications close. If you applied with teammates or your own project idea, we'll follow up about scope before the kickoff.",
+      "We have recorded your teammates and project idea. Applying solo is welcome too; we will help you find a group after applications close.",
+      `To revise your answers until the application deadline, sign in with this email at ${SITE}/login?next=/apply.`,
       `You can check your status any time at ${SITE}/dashboard.`,
     ],
   });
@@ -67,8 +70,8 @@ export function sendApplicationDecision(
     accepted: [
       `Hi ${name},`,
       "You're in. Welcome to the SOCIS Computer Science Incubator.",
-      `Next step: sign in at ${SITE}/dashboard to see your team, your executive contact, and the proposal deadline. Join the Discord if you haven't already.`,
-      "Your team submits a project proposal in Week 2, so read the guidelines before then.",
+      `Next step: sign in at ${SITE}/dashboard to see your group and executive contact. Join the Discord if you haven't already.`,
+      "Build on the idea in your application and agree on a project plan with your group. Your goal is a working project by semester's end, a Wood Centre pitch on November 19, and a SOCIS Demo Day presentation (date TBD).",
     ],
     waitlisted: [
       `Hi ${name},`,
@@ -78,7 +81,7 @@ export function sendApplicationDecision(
     declined: [
       `Hi ${name},`,
       "Thanks for applying to the incubator. We aren't able to offer you a spot this semester.",
-      "We're running a small pilot with 6 to 10 teams, so this was mostly a numbers decision. Our workshops and events stay open to everyone, and we'd genuinely like to see you apply again next semester.",
+      `This cohort has space for ${PROGRAM.targetTeams}, so places are limited. Our workshops and events stay open to everyone, and we would like to see you apply again next semester.`,
     ],
   }[status];
 

@@ -74,6 +74,13 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
       {canManage ? (
         <section className="border-t border-border pt-8">
           <h2 className="text-lg font-semibold">Manage this post</h2>
+          {isExec ? (
+            <p className="mt-2 text-sm">
+              <Link href="/admin/moderation" className="text-link underline underline-offset-4">
+                Remove inappropriate posts or messages in Moderation
+              </Link>
+            </p>
+          ) : null}
           <form action={updateIdeaStatus} className="mt-4 flex flex-wrap items-end gap-3">
             <input type="hidden" name="idea_id" value={idea.id} />
             <label className="space-y-2 text-sm font-medium">
@@ -116,7 +123,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
         <section className="max-w-2xl border-t border-border pt-8">
           <h2 className="text-lg font-semibold">Get in touch</h2>
           {!open ? (
-            <Alert className="mt-4">Contacting closed with applications.</Alert>
+            <Alert className="mt-4">Messages are available during the application period. Check the timeline for dates.</Alert>
           ) : idea.status !== "open" ? (
             <Alert className="mt-4">This post is no longer looking for people.</Alert>
           ) : !profile ? (

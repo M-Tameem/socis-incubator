@@ -79,8 +79,8 @@ export function IdeaForm({ defaultName }: { defaultName?: string }) {
       </Field>
 
       <Alert>
-        Posting does not create a team. Interested students can send a private message, and
-        SOCIS confirms final teams after applications close.
+        Interested students can message you here. Once you have a group, apply together with
+        the same teammates and project name. You can revise your applications until September 27.
       </Alert>
 
       <SubmitButton pendingLabel="Posting…">Post idea</SubmitButton>

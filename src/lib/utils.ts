@@ -10,7 +10,8 @@ export function formatDate(value: string | Date, opts?: Intl.DateTimeFormatOptio
     month: "long",
     day: "numeric",
     year: "numeric",
-    timeZone: "America/Toronto",
+    // A calendar date is not a UTC timestamp; Toronto would shift it to the previous day.
+    timeZone: typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) ? "UTC" : "America/Toronto",
     ...opts,
   }).format(typeof value === "string" ? new Date(value) : value);
 }

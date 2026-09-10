@@ -1,14 +1,18 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { applicationSchema, fieldErrors } from "@/lib/validation";
 import { sendApplicationReceived, sendNewApplicationAlert } from "@/lib/email";
 import { applicationsOpen, getSettings } from "@/lib/settings";
+import { applicationAnswers } from "@/lib/application-form";
 
 export type ApplyState = {
   errors?: Record<string, string>;
   values?: Record<string, string>;
+  saved?: boolean;
+  updatedAt?: string;
 };
 
 export async function submitApplication(
@@ -19,7 +23,7 @@ export async function submitApplication(
 
   if (!applicationsOpen(await getSettings())) {
     return {
-      errors: { form: "Applications for this semester are closed." },
+      errors: { form: "Applications are not open. Check the timeline for this semester's dates." },
       values: raw,
     };
   }
@@ -41,12 +45,9 @@ export async function submitApplication(
   } = await supabase.auth.getUser();
 
   const { error } = await supabase.from("applications").insert({
-    ...values,
-    github_url: values.github_url || null,
-    previous_projects: values.previous_projects || null,
-    teammates: values.teammates || null,
-    project_idea: values.project_idea || null,
-    user_id: user?.id ?? null,
+    ...applicationAnswers(values),
+    email: values.email.toLowerCase(),
+    user_id: user?.email?.toLowerCase() === values.email.toLowerCase() ? user.id : null,
   });
 
   if (error) {
@@ -54,7 +55,7 @@ export async function submitApplication(
     return {
       errors: {
         form: duplicate
-          ? "There is already an application with this email address. Email us if you need to change your answers."
+          ? "An application already exists for this email. Sign in with that address to edit it until the deadline."
           : "We could not save your application. Try again, and email us if it keeps failing.",
       },
       values: raw,
@@ -67,4 +68,39 @@ export async function submitApplication(
   ]);
 
   redirect("/apply/submitted");
+}
+
+export async function updateApplication(_prev: ApplyState, formData: FormData): Promise<ApplyState> {
+  const raw = Object.fromEntries(formData) as Record<string, string>;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.email || !user.email_confirmed_at) {
+    return { errors: { form: "Sign in with your application email to save changes." }, values: raw };
+  }
+  if (!applicationsOpen(await getSettings())) {
+    return { errors: { form: "The application deadline has passed. Your last saved answers are still submitted." }, values: raw };
+  }
+  const parsed = applicationSchema.safeParse({
+    ...raw,
+    email: user.email,
+    applying_with_team: raw.applying_with_team === "on",
+    has_project_idea: raw.has_project_idea === "on",
+  });
+  if (!parsed.success) return { errors: fieldErrors(parsed.error), values: raw };
+
+  const { data, error } = await supabase.rpc("revise_my_application", {
+    application_id: raw.application_id ?? "",
+    expected_updated_at: raw.updated_at ?? "",
+    application_values: applicationAnswers(parsed.data),
+  });
+  if (error || !data) {
+    return {
+      errors: { form: "We could not save your changes. The deadline may have passed, or this application changed in another tab. Refresh and try again." },
+      values: raw,
+    };
+  }
+  revalidatePath("/apply");
+  revalidatePath("/dashboard");
+  revalidatePath("/admin/applications");
+  return { saved: true, updatedAt: data, values: raw };
 }

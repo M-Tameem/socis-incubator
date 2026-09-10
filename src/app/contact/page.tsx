@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/page-header";
-import { EXEC_ROLES } from "@/lib/program";
+import { EXEC_ROLES, PROGRAM } from "@/lib/program";
 import { getSettings } from "@/lib/settings";
 
 export const metadata: Metadata = {
@@ -20,6 +20,14 @@ export default async function ContactPage() {
 
       <section>
         <dl className="divide-y divide-border border-y border-border">
+          <div className="grid gap-1 py-4 sm:grid-cols-[12rem_1fr] sm:gap-8">
+            <dt className="font-medium">SOCIS website</dt>
+            <dd>
+              <a href={PROGRAM.websiteUrl} className="text-link underline underline-offset-4 hover:no-underline">
+                socis.ca
+              </a>
+            </dd>
+          </div>
           <div className="grid gap-1 py-4 sm:grid-cols-[12rem_1fr] sm:gap-8">
             <dt className="font-medium">Email</dt>
             <dd>

@@ -18,10 +18,10 @@ export default async function SubmittedPage() {
 
       <div className="prose-page space-y-4 text-muted-foreground">
         <p>
-          We review applications as they arrive. Team placement starts after
-          applications close
+          Your teammates and project idea are included in your application. You can update
+          them as plans come together until applications close
           {settings.applications_close ? ` on ${formatDate(settings.applications_close)}` : ""}.
-          We will email every applicant with a decision.
+          We will follow up with program details and help solo applicants find a group.
         </p>
         <p>
           Join the SOCIS Discord for announcements. The{" "}
@@ -33,14 +33,10 @@ export default async function SubmittedPage() {
       </div>
 
       <p className="text-sm text-muted-foreground">
-        Need to change an answer? Email{" "}
-        <a
-          href={`mailto:${settings.contact_email}`}
-          className="text-link underline underline-offset-4 hover:no-underline"
-        >
-          {settings.contact_email}
-        </a>
-        .
+        <Link href="/login?next=/apply" className="text-link underline underline-offset-4 hover:no-underline">
+          Sign in to edit your application
+        </Link>{" "}
+        using the email you applied with. Changes are available until the deadline.
       </p>
     </div>
   );

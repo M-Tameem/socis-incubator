@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { StatusBadge } from "@/components/status-badge";
 import { Alert } from "@/components/ui/alert";
 import { CHECK_IN_QUESTIONS } from "@/lib/program";
-import { getSettings } from "@/lib/settings";
+import { getSettings, applicationsOpen } from "@/lib/settings";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Dashboard" };
@@ -16,11 +16,8 @@ export default async function DashboardPage() {
   const supabase = await createClient();
   const settings = await getSettings();
 
-  const { data: application } = await supabase
-    .from("applications")
-    .select("status, created_at")
-    .eq("email", profile.email)
-    .maybeSingle();
+  const { data: applications } = await supabase.rpc("get_my_application");
+  const application = applications?.[0];
 
   const { data: proposal } = team
     ? await supabase.from("proposals").select("status").eq("team_id", team.id).maybeSingle()
@@ -47,6 +44,14 @@ export default async function DashboardPage() {
         </p>
       </div>
 
+      {applicationsOpen(settings) ? (
+        <p className="text-sm text-muted-foreground">
+          <Link href="/apply" className="text-link underline underline-offset-4">Edit your application</Link>
+          {settings.applications_close ? ` through ${formatDate(settings.applications_close)}.` : " while applications are open."}
+          {" "}Update your teammates, project idea, or other answers as your plans take shape.
+        </p>
+      ) : null}
+
       {!team ? (
         <section className="space-y-4">
           <h2 className="text-lg font-semibold">Your application</h2>
@@ -65,8 +70,7 @@ export default async function DashboardPage() {
                     ? "You are on the waitlist. Spots often open in the first two weeks, and we will email you if one does."
                     : application.status === "declined"
                       ? "We could not offer you a spot this semester. Workshops and events are still open to you."
-                      : "We are reviewing applications and will email you once teams are placed" +
-                        (settings.teams_announced ? ` on ${formatDate(settings.teams_announced)}.` : ".")}
+                      : "We will follow up with program details. If you applied solo, we will help you find a group after applications close."}
               </p>
             </div>
           ) : (
@@ -167,7 +171,7 @@ export default async function DashboardPage() {
                   <Link href="/dashboard/proposal" className="text-link underline underline-offset-4">
                     Submit or update your project proposal
                   </Link>
-                  {settings.proposals_due ? ` · due ${formatDate(settings.proposals_due)}` : ""}
+                  {" · agree on your group's plan after joining"}
                 </li>
               ) : null}
               <li>
@@ -178,7 +182,9 @@ export default async function DashboardPage() {
               </li>
               {settings.demo_day_date ? (
                 <li>Demo Day is {formatDate(settings.demo_day_date)}. Presenting is required.</li>
-              ) : null}
+              ) : (
+                <li>Demo Day: date TBD. Presenting is required.</li>
+              )}
             </ul>
           </section>
         </>

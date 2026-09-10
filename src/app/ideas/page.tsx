@@ -50,8 +50,8 @@ export default async function IdeasPage() {
 
       {!open ? (
         <Alert>
-          The portal closed with applications. Posts remain visible, but new ideas and messages
-          are disabled.
+          New ideas and messages are available during the application period. Check the
+          timeline for dates; existing posts remain available to read.
         </Alert>
       ) : null}
 
@@ -122,12 +122,12 @@ export default async function IdeasPage() {
       </section>
 
       <section className="border-t border-border pt-8">
-        <h2 className="text-xl font-semibold">How teams are finalized</h2>
+        <h2 className="text-xl font-semibold">Found your group?</h2>
         <p className="prose-page mt-3 leading-7 text-muted-foreground">
-          Every student submits their own application. Use the portal to meet people, then list
-          preferred teammates in the application. SOCIS reviews availability and skills, confirms
-          teams of three to five, and assigns each team an executive contact. A portal conversation
-          is not a guaranteed placement.
+          Agree on an idea and apply together. Each person lists the same teammates and project
+          name in their application. You can revise your group and idea until September 27.
+          If you are still looking for people at the deadline, apply solo and SOCIS will help
+          you find a group.
         </p>
       </section>
     </div>
