@@ -58,7 +58,7 @@ export function ApplicationForm({ initialValues, applicationId, updatedAt }: {
         <Field
           label="Email"
           name="email"
-          hint={editing ? "This is the email you used to apply and sign in." : "Use this same address to sign in and edit your application later."}
+          hint="Your application is saved to the account you are signed in with."
           error={err.email}
           required
         >
@@ -67,7 +67,7 @@ export function ApplicationForm({ initialValues, applicationId, updatedAt }: {
             name="email"
             type="email"
             defaultValue={val.email}
-            readOnly={editing}
+            readOnly
             aria-invalid={Boolean(err.email)}
             autoComplete="email"
           />

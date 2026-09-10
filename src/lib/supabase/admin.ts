@@ -3,8 +3,8 @@ import type { Database } from "@/lib/types";
 import { getSupabaseConnection } from "@/lib/supabase/config";
 
 /**
- * Service-role client. Bypasses RLS, so it is only ever imported by server
- * actions that have already checked the caller is an executive.
+ * Server-only service-role client. Bypasses RLS. Callers must enforce executive
+ * access or the specific signup/recovery checks before using privileged operations.
  */
 export function createAdminClient() {
   const { url, key, clientOptions } = getSupabaseConnection(

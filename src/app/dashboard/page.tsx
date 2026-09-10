@@ -42,6 +42,9 @@ export default async function DashboardPage() {
         <p className="prose-page mt-2 text-muted-foreground">
           View your team, proposal, and check-ins here.
         </p>
+        <p className="mt-3 text-sm">
+          <Link href="/account/password" className="text-link underline underline-offset-4">Account settings</Link>
+        </p>
       </div>
 
       {applicationsOpen(settings) ? (

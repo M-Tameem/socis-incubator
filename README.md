@@ -84,7 +84,24 @@ http://localhost:3000/auth/callback**
 https://socis-incubator.vercel.app/auth/callback**
 ```
 
-Sign-in is by emailed magic link, so there are no passwords to manage or reset.
+Sign-in uses an email address and password. Signup creates an active account immediately,
+without sending a confirmation email. Users choose a recovery answer at signup and can reset
+their password with that answer; the answer is salted and hashed with scrypt in a server-only
+table. Signup and recovery each allow five attempts per email per hour, plus 200 per IP per
+hour on Vercel, enforced in Postgres across app instances. Other hosts share the IP bucket
+until their trusted proxy is configured. Ordinary sign-in uses Supabase's password endpoint.
+
+Apply all migrations through `20260910040000_password_recovery.sql` before deploying this
+flow. The app uses the server-only admin API to activate **new** accounts and marks them
+`password_without_verification`; it never activates or changes an existing account just
+because somebody enters its email. Leave Supabase's direct email-signup confirmation setting
+enabled so clients outside this flow cannot masquerade as legacy email-verified accounts.
+No SMTP setup is required for the app's signup, login, or recovery flows.
+
+Existing users who are still signed in can open `/account/password` to set a password and
+recovery answer. Users who have neither a password nor a recovery answer need a trusted
+SOCIS operator to verify them and set a temporary password through the Supabase Auth Admin
+API. Never create a replacement account or change its role to resolve a forgotten password.
 
 For the hosted project, set **Site URL** to `https://socis-incubator.vercel.app`.
 The callback allow-list entries above include the `?next=...` query used by sign-in.
@@ -99,7 +116,7 @@ Set `RESEND_API_KEY`, `EMAIL_FROM`, and `EMAIL_ADMIN`.
 The public contact and transactional email Reply-To address is `socis@uoguelph.ca`.
 Set `EMAIL_ADMIN=socis@uoguelph.ca` in Vercel for application alerts. Keep `EMAIL_FROM`
 on your verified Resend sending domain; a contact address does not grant permission to send
-from the university's domain. Supabase sends magic links using its own email configuration.
+from the university's domain. Signup, sign-in, and recovery do not send email.
 
 Without `RESEND_API_KEY` the app logs emails to the console instead of sending them,
 so local development works with no Resend account.
@@ -119,8 +136,7 @@ every push and pull request.
 
 ### 5. Enroll SOCIS staff and executives
 
-Have each staff member sign in at `/login` with their own email and complete the magic-link
-sign-in once. This creates their profile; they do not need to submit a student application.
+Have each staff member create an account at `/login?mode=signup` and sign in with their password. This creates their profile; they do not need to submit a student application.
 A trusted Supabase project operator then runs this in the production SQL editor, replacing
 the example address with the staff member's exact sign-in email:
 
@@ -155,14 +171,16 @@ Vercel **Production** environment and redeploy after changing it. The app uses t
 for auth and transactional links; missing, malformed, insecure, or localhost production
 values fall back to the production address above. Development still defaults to localhost.
 
-If a magic link sends you to localhost, check both that Vercel variable and Supabase
+For previously issued magic links that send you to localhost, check both that Vercel variable and Supabase
 **Authentication → URL Configuration** (Site URL and allowed callback URL above). Keep the
 Magic Link email template pointing to `{{ .ConfirmationURL }}` for the existing code-exchange
 flow. After correcting the settings, request a fresh link and open it in the browser where
 you requested it. Already-issued emails retain their original redirect URL.
 
 Keep `SUPABASE_SERVICE_ROLE_KEY` server-side only. It bypasses row-level security and is
-used only by admin server actions that have already verified the caller is an executive.
+used by executive actions after authorization, account settings after session verification,
+and signup/recovery after validation and persistent rate-limit checks. Recovery requires the
+correct answer before the admin API changes the matching account password.
 
 Before the first production deploy:
 
@@ -171,8 +189,8 @@ Before the first production deploy:
    for both public Supabase variables and `SUPABASE_SERVICE_ROLE_KEY`.
 3. Add the production `/auth/callback` URL to Supabase Authentication URL Configuration.
 4. Set `NEXT_PUBLIC_SITE_URL` to the final HTTPS origin, with no trailing slash.
-5. Run `npm run check`, then exercise one magic-link login, application submission, and admin
-   status update against the production Supabase project.
+5. Run `npm run check`, then exercise signup, password login, recovery, application submission,
+   and an admin status update against the production Supabase project.
 
 ---
 
@@ -199,8 +217,11 @@ Keep unconfirmed Demo Day settings empty so the site displays **TBD**, rather th
 the text `TBD` in a date field.
 
 Also apply `20260910030000_applicant_revisions.sql` before deploying application editing.
-Applicants sign in with the same email they applied with and return to `/apply`. Verified
-email ownership lets them retrieve an earlier anonymous submission. Narrow database functions
+New applicants create an account before submitting, then return to `/apply` to revise.
+Applications are attached to the signed-in user's ID. Legacy email-verified accounts can still
+retrieve an earlier anonymous submission. New password-only accounts cannot claim one by
+matching its email; SOCIS must verify the person and link that existing application to their
+account ID. Narrow database functions
 return only applicant-visible fields and revise only their own answers while the application
 window is open. Email, review decisions, notes, and team assignments cannot be changed through
 this flow. A revision updates the existing row, checks for stale edits, and sends no duplicate
@@ -280,7 +301,8 @@ src/
     dashboard/            student area: team, proposal, check-ins
     admin/                executive area: applications, teams, check-ins,
                           events, settings
-    auth/                 magic-link callback and sign-out
+    auth/                 legacy email-link callback and sign-out
+    account/password/     password and recovery-answer settings
   components/
     ui/                   shadcn-style primitives
     site-header, site-footer, nav-link, page-header, status-badge, form

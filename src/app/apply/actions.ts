@@ -20,6 +20,9 @@ export async function submitApplication(
   formData: FormData,
 ): Promise<ApplyState> {
   const raw = Object.fromEntries(formData) as Record<string, string>;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.email) return { errors: { form: "Sign in before submitting your application." }, values: raw };
 
   if (!applicationsOpen(await getSettings())) {
     return {
@@ -30,6 +33,7 @@ export async function submitApplication(
 
   const parsed = applicationSchema.safeParse({
     ...raw,
+    email: user.email,
     applying_with_team: raw.applying_with_team === "on",
     has_project_idea: raw.has_project_idea === "on",
   });
@@ -39,15 +43,11 @@ export async function submitApplication(
   }
 
   const values = parsed.data;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   const { error } = await supabase.from("applications").insert({
     ...applicationAnswers(values),
     email: values.email.toLowerCase(),
-    user_id: user?.email?.toLowerCase() === values.email.toLowerCase() ? user.id : null,
+    user_id: user.id,
   });
 
   if (error) {
@@ -55,7 +55,7 @@ export async function submitApplication(
     return {
       errors: {
         form: duplicate
-          ? "An application already exists for this email. Sign in with that address to edit it until the deadline."
+          ? "An application already exists for this email. If it was submitted before you created your account, contact SOCIS to link it."
           : "We could not save your application. Try again, and email us if it keeps failing.",
       },
       values: raw,

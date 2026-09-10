@@ -172,6 +172,12 @@ type Timestamps = "created_at" | "updated_at";
 export type Database = {
   public: {
     Tables: {
+      account_recovery: {
+        Row: { user_id: string; email: string; answer_hash: string; updated_at: string };
+        Insert: { user_id: string; email: string; answer_hash: string; updated_at?: string };
+        Update: Partial<{ user_id: string; email: string; answer_hash: string; updated_at: string }>;
+        Relationships: [];
+      };
       profiles: {
         Row: Profile;
         Insert: Omit<Profile, "created_at" | "role"> & { role?: UserRole; created_at?: string };
@@ -323,6 +329,10 @@ export type Database = {
     };
     Views: Record<never, never>;
     Functions: {
+      consume_auth_attempt: {
+        Args: { bucket_key: string; attempt_limit: number; window_seconds: number };
+        Returns: boolean;
+      };
       get_my_application: {
         Args: Record<PropertyKey, never>;
         Returns: ApplicantApplication[];

@@ -13,7 +13,7 @@ export default async function SubmittedPage() {
     <div className="space-y-8">
       <PageHeader
         title="Your application is in"
-        lede="A confirmation is on its way. Check your spam folder if it does not arrive."
+        lede="Your application is saved. You can return to it and make changes until the deadline."
       />
 
       <div className="prose-page space-y-4 text-muted-foreground">
@@ -33,10 +33,10 @@ export default async function SubmittedPage() {
       </div>
 
       <p className="text-sm text-muted-foreground">
-        <Link href="/login?next=/apply" className="text-link underline underline-offset-4 hover:no-underline">
-          Sign in to edit your application
+        <Link href="/apply" className="text-link underline underline-offset-4 hover:no-underline">
+          Edit your application
         </Link>{" "}
-        using the email you applied with. Changes are available until the deadline.
+        from your account. Changes are available until the deadline.
       </p>
     </div>
   );

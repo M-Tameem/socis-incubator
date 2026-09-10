@@ -7,6 +7,7 @@ import { formatDate } from "@/lib/utils";
 import { Alert } from "@/components/ui/alert";
 import { createClient } from "@/lib/supabase/server";
 import { applicationFormValues } from "@/lib/application-form";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Apply",
@@ -47,6 +48,16 @@ export default async function ApplyPage() {
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return (
+    <div className="max-w-2xl space-y-6">
+      <PageHeader title="Apply" lede="Apply with your friends or on your own. Create an account so you can save and revise your application until September 27." />
+      <p className="text-muted-foreground">Choose a password and recovery answer. Your account is ready immediately, with no email confirmation.</p>
+      <div className="flex flex-wrap items-center gap-4">
+        <Button asChild><Link href="/login?mode=signup&next=/apply">Create account and apply</Link></Button>
+        <Link href="/login?next=/apply" className="text-link underline underline-offset-4">Already have an account? Sign in</Link>
+      </div>
+    </div>
+  );
   const { data: applications, error } = user?.email_confirmed_at
     ? await supabase.rpc("get_my_application")
     : { data: null, error: null };
