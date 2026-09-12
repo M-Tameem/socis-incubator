@@ -8,7 +8,7 @@ export type Settings = Record<string, string>;
 const FALLBACK: Settings = {
   ...PROGRAM_DATES,
   contact_email: PROGRAM.contactEmail,
-  discord_url: "https://discord.gg/socis",
+  discord_url: "https://discord.gg/fa4tF7Gny",
 };
 
 /**

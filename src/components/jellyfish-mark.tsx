@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 export function JellyfishMark({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 200 200"
+      viewBox="-30 -30 260 260"
       width="200"
       height="200"
       fill="none"
@@ -34,10 +34,14 @@ export function JellyfishMark({ className }: { className?: string }) {
       </g>
       <path d="M93 94Q100 102 107 94" stroke="#4d2859" strokeWidth="3" strokeLinecap="round" />
       <g stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-        <path d="M165 41V53M159 47H171M30 91V99M26 95H34" />
+        <path d="M165 41V53M159 47H171M30 91V99M26 95H34M48 14V26M42 20H54M152 162V174M146 168H158M-18 146V154M-22 150H-14" />
       </g>
       <circle cx="36" cy="54" r="3" fill="currentColor" opacity="0.5" />
       <circle cx="172" cy="111" r="3" fill="currentColor" opacity="0.5" />
+      <circle cx="110" cy="18" r="2.5" fill="currentColor" opacity="0.5" />
+      <circle cx="55" cy="182" r="2.5" fill="currentColor" opacity="0.4" />
+      <circle cx="216" cy="72" r="2.5" fill="currentColor" opacity="0.4" />
+      <circle cx="198" cy="188" r="2" fill="currentColor" opacity="0.3" />
     </svg>
   );
 }

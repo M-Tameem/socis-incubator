@@ -27,7 +27,7 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-20">
-      <section className="grid items-center gap-6 py-4 sm:py-8 lg:grid-cols-[minmax(0,1fr)_15rem]">
+      <section className="relative grid items-center gap-6 py-4 sm:py-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div>
           <p className="text-label">{PROGRAM.term} · Applications {applicationLabel}</p>
           <h1 className="mt-5 max-w-3xl text-5xl font-semibold leading-[1.05] tracking-[-0.045em] sm:text-7xl">
@@ -70,7 +70,53 @@ export default async function HomePage() {
             </p>
           ) : null}
         </div>
-        <JellyfishMark className="size-36 justify-self-center text-brand sm:size-48 lg:size-60 lg:rotate-6" />
+        <JellyfishMark className="size-52 justify-self-center text-brand sm:size-64 lg:size-80 lg:rotate-6" />
+
+        <svg
+          viewBox="0 0 12 12"
+          className="pointer-events-none absolute left-[8%] top-0 hidden size-3 text-brand opacity-40 lg:block"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+        <span className="pointer-events-none absolute left-1/3 top-2 hidden size-1.5 rounded-full bg-brand opacity-30 lg:block" />
+        <svg
+          viewBox="0 0 12 12"
+          className="pointer-events-none absolute right-[23rem] top-4 hidden size-2.5 text-brand opacity-35 lg:block"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+        <span className="pointer-events-none absolute right-[21.5rem] top-1/3 hidden size-1.5 rounded-full bg-brand opacity-30 lg:block" />
+        <svg
+          viewBox="0 0 12 12"
+          className="pointer-events-none absolute bottom-6 left-[42%] hidden size-2 text-brand opacity-30 lg:block"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+        <span className="pointer-events-none absolute left-[2%] top-1/4 hidden size-1.5 rounded-full bg-brand opacity-25 lg:block" />
+        <svg
+          viewBox="0 0 12 12"
+          className="pointer-events-none absolute left-[20%] bottom-2 hidden size-2 text-brand opacity-30 lg:block"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+        <span className="pointer-events-none absolute right-[24rem] bottom-8 hidden size-1.5 rounded-full bg-brand opacity-30 lg:block" />
+        <svg
+          viewBox="0 0 12 12"
+          className="pointer-events-none absolute right-[9%] top-10 hidden size-2.5 text-brand opacity-30 lg:block"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+        <span className="pointer-events-none absolute left-[55%] top-0 hidden size-1 rounded-full bg-brand opacity-20 lg:block" />
       </section>
 
       <section aria-label="Program details" className="border-y border-border">

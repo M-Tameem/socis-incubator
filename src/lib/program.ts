@@ -180,6 +180,7 @@ export const MILESTONES: Milestone[] = [
 export const EXPECTATIONS = [
   "Spend 4–6 hours a week on the project",
   "Submit one team check-in every two weeks",
+  "Must be available through Demo Day",
   "Keep the code in a team GitHub repository",
   "Reply when your executive contact checks in",
   "Build a working project by the end of the semester",
@@ -190,7 +191,6 @@ export const ELIGIBILITY = [
   "Enrolled in Computer Science, Software Engineering, or a related program",
   "In any year of study",
   "Comfortable writing some code; project experience is not required",
-  "Available through Demo Day",
 ];
 
 export type Faq = { question: string; answer: string };
