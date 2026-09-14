@@ -20,7 +20,7 @@ export const PROGRAM = {
 } as const;
 
 export const PROGRAM_DATES = {
-  applications_open: "2026-09-09",
+  applications_open: "2026-09-14",
   applications_close: "2026-09-27",
   teams_announced: "2026-09-22",
   proposals_due: "2026-09-27",
