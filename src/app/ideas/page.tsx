@@ -64,7 +64,7 @@ export default async function IdeasPage() {
               Keep it simple:
               <ul className="mt-2 list-disc pl-5">
                 <li>What problem are you trying to solve?</li>
-                <li>What's the smallest usable version?</li>
+                <li>What&apos;s the smallest usable version?</li>
                 <li>What skills are needed?</li>
               </ul>
             </p>

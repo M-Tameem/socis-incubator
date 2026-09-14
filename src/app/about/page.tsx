@@ -43,7 +43,7 @@ export default function AboutPage() {
       <section>
         <h2 className="text-xl font-semibold">Build something small first</h2>
         <p className="prose-page mt-2 text-muted-foreground">
-          Start with the smallest useful version of your idea. Build that first, get feedback, then decide what's worth adding.
+          Start with the smallest useful version of your idea. Build that first, get feedback, then decide what&apos;s worth adding.
         </p>
       </section>
 

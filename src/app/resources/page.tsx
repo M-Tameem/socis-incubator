@@ -103,7 +103,7 @@ export default function ResourcesPage() {
           ))}
         </dl>
         <p className="mt-8 text-sm">
-          Can't find something? Ask your SOCIS executive contact.
+          Can&apos;t find something? Ask your SOCIS executive contact.
         </p>
       </section>
     </div>
