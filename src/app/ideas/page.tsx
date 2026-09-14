@@ -33,8 +33,8 @@ export default async function IdeasPage() {
   return (
     <div className="space-y-12">
       <PageHeader
-        title="Idea portal"
-        lede="Share something you want to build, or find a project that needs your skills. This is a meeting place, not a hiring board."
+        title="Ideas"
+        lede="Looking for a project? Browse ideas and connect with students who want to build something together."
       >
         <div className="flex flex-wrap gap-3">
           {open ? (
@@ -59,18 +59,23 @@ export default async function IdeasPage() {
         <div className="flex gap-4">
           <Lightbulb className="mt-0.5 size-5 shrink-0 text-brand" aria-hidden="true" />
           <div>
-            <h2 className="font-medium">Have an idea?</h2>
+            <h2 className="font-medium">Posting an Idea</h2>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Post the problem, a small first version, and the kind of help you need.
+              Keep it simple:
+              <ul className="mt-2 list-disc pl-5">
+                <li>What problem are you trying to solve?</li>
+                <li>What&apos;s the smallest usable version?</li>
+                <li>What skills are needed?</li>
+              </ul>
             </p>
           </div>
         </div>
         <div className="flex gap-4">
           <Users className="mt-0.5 size-5 shrink-0 text-brand" aria-hidden="true" />
           <div>
-            <h2 className="font-medium">Want to join one?</h2>
+            <h2 className="font-medium">Want to join an idea?</h2>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Send the author a private note. They receive your email and decide whether to reply.
+              Send the author a private note. They receive your email and can decide whether to reply.
             </p>
           </div>
         </div>
@@ -116,7 +121,7 @@ export default async function IdeasPage() {
         ) : (
           <div className="mt-6 rounded-md border border-dashed border-border px-5 py-12 text-center">
             <p className="font-medium">No ideas have been posted yet.</p>
-            <p className="mt-1 text-sm text-muted-foreground">The first post sets the tone. Keep it concrete.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Be the first!</p>
           </div>
         )}
       </section>
@@ -124,10 +129,7 @@ export default async function IdeasPage() {
       <section className="border-t border-border pt-8">
         <h2 className="text-xl font-semibold">Found your group?</h2>
         <p className="prose-page mt-3 leading-7 text-muted-foreground">
-          Agree on an idea and apply together. Each person lists the same teammates and project
-          name in their application. You can revise your group and idea until September 27.
-          If you are still looking for people at the deadline, apply solo and SOCIS will help
-          you find a group.
+          Apply together through the incubator application. You can update your teammates and project idea until September 27.
         </p>
       </section>
     </div>

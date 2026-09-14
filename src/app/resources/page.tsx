@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
-import { createClient } from "@/lib/supabase/server";
 import { CHECK_IN_QUESTIONS, TOOLING } from "@/lib/program";
 
 export const metadata: Metadata = {
@@ -9,91 +8,80 @@ export const metadata: Metadata = {
   description: "Templates, guidelines, and technical resources for incubator teams.",
 };
 
-export const revalidate = 300;
-
-export default async function ResourcesPage() {
-  const supabase = await createClient();
-  const { data: resources } = await supabase
-    .from("resources")
-    .select("*")
-    .eq("published", true)
-    .order("sort_order");
-
-  const grouped = (resources ?? []).reduce<Record<string, typeof resources>>((acc, r) => {
-    (acc[r.category] ??= []).push(r);
-    return acc;
-  }, {});
-
+export default function ResourcesPage() {
   return (
     <div className="space-y-14">
       <PageHeader
         title="Resources"
-        lede="Templates and working notes for current teams. Ask your executive contact if a link is missing."
+        lede="Everything you need while working on your project."
       />
 
-      {Object.keys(grouped).length > 0 ? (
-        <div className="space-y-10">
-          {Object.entries(grouped).map(([category, items]) => (
-            <section key={category}>
-              <h2 className="text-lg font-semibold">{category}</h2>
-              <ul className="mt-4 divide-y divide-border border-y border-border">
-                {(items ?? []).map((r) => (
-                  <li key={r.id} className="py-3">
-                    <a
-                      href={r.url}
-                      className="text-link underline underline-offset-4 hover:no-underline"
-                    >
-                      {r.title}
-                    </a>
-                    {r.description ? (
-                      <p className="prose-page mt-1 text-sm text-muted-foreground">
-                        {r.description}
-                      </p>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
-      ) : (
-        <p className="text-muted-foreground">Resources will be posted before Week 3.</p>
-      )}
-
       <section>
-        <h2 className="text-lg font-semibold">Program guidelines</h2>
-        <div className="prose-page mt-3 space-y-4 text-muted-foreground">
-          <p>
-            <span className="font-medium text-foreground">Scope.</span> Your first usable version
-            should be small enough to finish by semester&apos;s end. Decide what matters most and
-            save extra features for later.
-          </p>
-          <p>
-            <span className="font-medium text-foreground">Repositories.</span> Use one repository
-            per team. Keep it public when possible. The README should explain the project and
-            how to run it. Use issues and pull requests for shared work.
-          </p>
-          <p>
-            <span className="font-medium text-foreground">Finalization.</span> Weeks 10–13 focus on
-            finishing, testing, and presenting. Detailed arrangements are TBD. Pitch at the Wood
-            Centre on November 19 and present at SOCIS Demo Day (date TBD).
-          </p>
-          <p>
-            <span className="font-medium text-foreground">Spending.</span> Get approval from
-            Finance and Operations before you spend anything. Keep receipts. Reimbursement
-            requires presenting at Demo Day.
-          </p>
+        <h2 className="text-lg font-semibold">Start your project</h2>
+        <div className="prose-page mt-3 space-y-6 text-muted-foreground">
+          <div>
+            <ul className="list-disc space-y-2 pl-5">
+              <li>
+                <Link
+                  href="https://docs.google.com/document/d/1zuGTDYK_a_yGVKvkKlwDhbSbM2P5HDIKSSPUhisa-5E/edit?tab=t.adu1lva7o6gk"
+                  className="text-link underline underline-offset-4 hover:no-underline"
+                >
+                  Project proposal template
+                </Link>
+                : complete during Week 2
+              </li>
+              <li>
+                <Link
+                  href="https://docs.google.com/document/d/1zuGTDYK_a_yGVKvkKlwDhbSbM2P5HDIKSSPUhisa-5E/edit?tab=t.riu8urbffryk"
+                  className="text-link underline underline-offset-4 hover:no-underline"
+                >
+                  MVP scoping worksheet
+                </Link>
+                : turn your idea into something achievable
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-medium text-foreground">GitHub</h3>
+            <ul className="mt-2 list-disc space-y-2 pl-5">
+              <li>Git and GitHub for teams: branches, pull requests, and reviews</li>
+              <li>Writing a README people read: a guide to documenting your project</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-medium text-foreground">Deployment</h3>
+            <ul className="mt-2 list-disc space-y-2 pl-5">
+              <li>Deploying on Vercel: free hosting for most student projects</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-medium text-foreground">Program</h3>
+            <ul className="mt-2 list-disc space-y-2 pl-5">
+              <li>
+                <Link
+                  href="https://docs.google.com/document/d/1zuGTDYK_a_yGVKvkKlwDhbSbM2P5HDIKSSPUhisa-5E/edit?tab=t.x8spv7gwhnvq"
+                  className="text-link underline underline-offset-4 hover:no-underline"
+                >
+                  Reimbursement form
+                </Link>
+                : submit receipts for approved expenses
+              </li>
+            </ul>
+          </div>
         </div>
       </section>
 
       <section>
         <h2 className="text-lg font-semibold">Check-in questions</h2>
         <p className="prose-page mt-2 text-muted-foreground">
-          Submit one team update every two weeks in the{" "}
+          Your update should take about five minutes on the{" "}
           <Link href="/dashboard/check-ins" className="text-link underline underline-offset-4 hover:no-underline">
             dashboard
           </Link>
-          . It should take about five minutes.
+          .
         </p>
         <ul className="prose-page mt-4 list-disc space-y-1.5 pl-5 text-muted-foreground">
           {CHECK_IN_QUESTIONS.map((q) => (
@@ -102,16 +90,21 @@ export default async function ResourcesPage() {
         </ul>
       </section>
 
-      <section>
-        <h2 className="text-lg font-semibold">Tools</h2>
-        <dl className="mt-4 divide-y divide-border border-y border-border">
+      <section aria-labelledby="tools">
+        <h2 id="tools" className="text-2xl font-semibold">
+          Where things live
+        </h2>
+        <dl className="mt-6 divide-y divide-border border-y border-border">
           {TOOLING.map((row) => (
-            <div key={row.tool} className="grid gap-1 py-3 sm:grid-cols-[10rem_1fr] sm:gap-8">
-              <dt className="font-medium">{row.tool}</dt>
-              <dd className="text-muted-foreground">{row.use}</dd>
-            </div>
+          <div key={row.tool} className="grid gap-1 py-3 sm:grid-cols-[10rem_1fr] sm:gap-8">
+            <dt className="font-medium">{row.tool}</dt>
+            <dd className="text-muted-foreground">{row.use}</dd>
+          </div>
           ))}
         </dl>
+        <p className="mt-8 text-sm">
+          Can&apos;t find something? Ask your SOCIS executive contact.
+        </p>
       </section>
     </div>
   );

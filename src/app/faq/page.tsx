@@ -13,7 +13,6 @@ export default function FaqPage() {
     <div className="space-y-12">
       <PageHeader
         title="Frequently asked questions"
-        lede="Email us or ask in Discord if something is missing."
       />
 
       <dl className="divide-y divide-border border-b border-border">
@@ -26,15 +25,11 @@ export default function FaqPage() {
       </dl>
 
       <p className="text-sm text-muted-foreground">
-        Need another answer?{" "}
-        <Link href="/contact" className="text-link underline underline-offset-4 hover:no-underline">
-          Contact the team
-        </Link>{" "}
-        or email{" "}
+        Still have a question? Email{" "}
         <a href={`mailto:${PROGRAM.contactEmail}`} className="text-link underline underline-offset-4 hover:no-underline">
           {PROGRAM.contactEmail}
-        </a>
-        .
+        </a>{" "}
+        or ask in Discord.
       </p>
     </div>
   );
