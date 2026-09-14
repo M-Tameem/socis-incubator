@@ -35,13 +35,10 @@ export default async function HomePage() {
             <span className="block">Ship it this semester.</span>
           </h1>
           <p className="mt-7 max-w-2xl text-xl leading-8 text-muted-foreground sm:text-2xl sm:leading-9">
-            SOCIS Incubator helps Computer Science and Software Engineering students take one
-            useful idea to a working project by the end of the semester.
+            SOCIS Incubator helps Computer Science and Software Engineering students turn an idea into a working project by the end of the semester.
           </p>
           <p className="prose-page mt-4 leading-7 text-muted-foreground">
-            Bring friends or meet people around an idea and apply together. Solo applicants are
-            welcome too. Build your project, pitch at the Wood Centre on November 19, and present
-            at SOCIS Demo Day (date TBD).
+            Bring a team, find teammates through the Idea Portal, or apply solo.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -134,10 +131,6 @@ export default async function HomePage() {
         <h2 id="phases" className="text-2xl font-semibold">
           The semester
         </h2>
-        <p className="prose-page mt-2 text-muted-foreground">
-          Most weeks are for building. Check-ins and scope reviews keep the work moving.
-        </p>
-
         <ol className="mt-8 divide-y divide-border border-y border-border">
           {PHASES.map((phase) => (
             <li key={phase.number} className="grid gap-3 py-6 sm:grid-cols-[3rem_10rem_1fr] sm:gap-8">
@@ -160,27 +153,9 @@ export default async function HomePage() {
 
         <p className="mt-8 text-sm">
           <Link href="/timeline" className="text-link underline underline-offset-4 hover:no-underline">
-            See the full timeline and important dates
+            See the full timeline for dates and weekly details.
           </Link>
         </p>
-      </section>
-
-      <section aria-labelledby="tools">
-        <h2 id="tools" className="text-2xl font-semibold">
-          Where things live
-        </h2>
-        <p className="prose-page mt-2 text-muted-foreground">
-          The site handles program records. Work and conversation stay in the tools teams
-          already use.
-        </p>
-        <dl className="mt-6 divide-y divide-border border-y border-border">
-          {TOOLING.map((row) => (
-            <div key={row.tool} className="grid gap-1 py-3 sm:grid-cols-[10rem_1fr] sm:gap-8">
-              <dt className="font-medium">{row.tool}</dt>
-              <dd className="text-muted-foreground">{row.use}</dd>
-            </div>
-          ))}
-        </dl>
       </section>
 
       <section className="border-t border-border pt-10">
@@ -190,14 +165,13 @@ export default async function HomePage() {
           <Link href="/faq" className="text-link underline underline-offset-4 hover:no-underline">
             FAQ
           </Link>{" "}
-          first. You can also email{" "}
+          or email{" "}
           <a
             href={`mailto:${settings.contact_email || PROGRAM.contactEmail}`}
             className="text-link underline underline-offset-4 hover:no-underline"
           >
             {settings.contact_email || PROGRAM.contactEmail}
           </a>{" "}
-          or ask in Discord.
         </p>
       </section>
     </div>

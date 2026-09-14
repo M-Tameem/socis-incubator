@@ -16,18 +16,8 @@ export default function AboutPage() {
       <PageHeader
         title="How it works"
         illustration={<JellyfishMark className="size-36 justify-self-center text-brand sm:size-48" />}
-        lede="Teams of three to five build one project over a semester. SOCIS sets deadlines and helps when a team gets stuck."
+        lede="Teams of 3–5 students spend one semester building a working project. SOCIS provides structure, check-ins, workshops, and support when teams get stuck."
       />
-
-      <section>
-        <h2 className="text-xl font-semibold">What you leave with</h2>
-        <ul className="prose-page mt-4 list-disc space-y-2 pl-5 text-muted-foreground">
-          <li>A working project by the end of the semester, with a useful README</li>
-          <li>Experience planning and reviewing code with a team</li>
-          <li>Feedback from people outside your group</li>
-          <li>A pitch at the Wood Centre on November 19 and a SOCIS Demo Day presentation (date TBD)</li>
-        </ul>
-      </section>
 
       <section>
         <h2 className="text-xl font-semibold">Who can apply</h2>
@@ -39,7 +29,10 @@ export default function AboutPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold">What we expect from you</h2>
+        <h2 className="text-xl font-semibold">Your commitment</h2>
+        <p className="prose-page mt-2 text-muted-foreground">
+          Plan for 4–6 hours a week. Teams also need to:
+        </p>
         <ul className="prose-page mt-4 list-disc space-y-2 pl-5 text-muted-foreground">
           {EXPECTATIONS.map((item) => (
             <li key={item}>{item}</li>
@@ -48,22 +41,24 @@ export default function AboutPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold">How teams are formed</h2>
-        <div className="prose-page mt-3 space-y-3 leading-7 text-muted-foreground">
-          <p>
-            Bring a group of three to five friends, or meet people around an idea and apply
-            together. Each person fills out the same application and lists the same teammates
-            and project name so we can record your group.
-          </p>
-          <p>
-            Use the idea portal to share an idea, chat with people who like it, and form a group.
-            You can revise your application, teammates, and project idea through September 27.
-          </p>
-          <p>
-            If you do not have a group or an idea yet, apply solo by the same deadline. SOCIS
-            will help you find a team and give each group an executive contact for support.
-          </p>
-        </div>
+        <h2 className="text-xl font-semibold">Build something small first</h2>
+        <p className="prose-page mt-2 text-muted-foreground">
+          Start with the smallest useful version of your idea. Build that first, get feedback, then decide what's worth adding.
+        </p>
+      </section>
+
+            <section>
+        <h2 className="text-xl font-semibold">How teams form</h2>
+        <p className="prose-page mt-3 text-muted-foreground">You can:</p>
+        <ul className="prose-page mt-3 list-disc space-y-2 pl-5 text-muted-foreground">
+          <li>Apply with 3–5 friends</li>
+          <li>Find teammates through the Idea Portal</li>
+          <li>Apply solo and let SOCIS help you find a team</li>
+        </ul>
+        <p className="prose-page mt-4 leading-7 text-muted-foreground">
+          Only one person per team needs to submit the application. You can change your
+          teammates or project idea until September 27.
+        </p>
         <p className="mt-5 text-sm">
           <Link href="/ideas" className="text-link underline underline-offset-4 hover:no-underline">
             Browse project ideas
@@ -93,50 +88,28 @@ export default function AboutPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold">Bi-weekly check-ins</h2>
+        <h2 className="text-xl font-semibold">Support</h2>
         <p className="prose-page mt-2 text-muted-foreground">
-          Every two weeks, one person submits a five-minute update for the team. SOCIS uses it
-          to spot blockers early.
+          Every team has a SOCIS executive contact for questions. Workshops, mentors, and other support will be announced throughout the semester.
         </p>
-        <ul className="prose-page mt-4 list-disc space-y-1.5 pl-5 text-muted-foreground">
-          {CHECK_IN_QUESTIONS.map((q) => (
-            <li key={q}>{q}</li>
-          ))}
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold">Project Costs</h2>
+        <p className="prose-page mt-2 text-muted-foreground">
+          Microgrants of {PROGRAM.microgrant} are available for approved project costs. Get approval from Finance and Operations before spending.
+        </p>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold">What you leave with</h2>
+        <ul className="prose-page mt-4 list-disc space-y-2 pl-5 text-muted-foreground">
+          <li>A working project</li>
+          <li>A GitHub repository and README</li>
+          <li>Experience building with a team</li>
+          <li>Feedback on your work</li>
+          <li>Experience presenting a project</li>
         </ul>
-      </section>
-
-      <section>
-        <h2 className="text-xl font-semibold">Keep the scope small</h2>
-        <p className="prose-page mt-2 text-muted-foreground">
-          Build a working project by semester&apos;s end. Choose a small first version, then use
-          feedback and check-ins to keep it achievable. Weeks 10–13 focus on finalizing and
-          presenting; detailed arrangements are TBD, with the Wood Centre pitch on November 19.
-        </p>
-      </section>
-
-      <section>
-        <h2 className="text-xl font-semibold">Money</h2>
-        <p className="prose-page mt-2 text-muted-foreground">
-          Teams can request microgrants of {PROGRAM.microgrant} for approved project costs. Ask Finance and
-          Operations before spending and keep the receipt. Reimbursement is processed after
-          the team presents at Demo Day.
-        </p>
-      </section>
-
-      <section>
-        <h2 className="text-xl font-semibold">Who runs it</h2>
-        <p className="prose-page mt-2 text-muted-foreground">
-          SOCIS executives run the program. Your team gets one contact for questions and
-          blockers.
-        </p>
-        <dl className="mt-6 divide-y divide-border border-y border-border">
-          {EXEC_ROLES.map((role) => (
-            <div key={role.title} className="grid gap-1 py-3 sm:grid-cols-[16rem_1fr] sm:gap-8">
-              <dt className="font-medium">{role.title}</dt>
-              <dd className="text-muted-foreground">{role.duties}</dd>
-            </div>
-          ))}
-        </dl>
       </section>
 
       <section className="border-t border-border pt-10">
